@@ -117,9 +117,17 @@
   .file-size { font-size: 12px; color: var(--text3); }
   .file-remove { margin-left: auto; background: none; border: none; color: var(--text3); cursor: pointer; font-size: 18px; }
 
-  .detail-wrap { max-width: 1200px; display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
+  .detail-wrap { display: grid; grid-template-columns: 3fr 2fr; gap: 20px; align-items: start; }
   .detail-left { min-width: 0; }
   .detail-right { position: sticky; top: 0; max-height: calc(100vh - var(--header-h) - 48px); overflow-y: auto; }
+  .detail-right .issue-card { padding: 10px 12px; }
+  .detail-right .issue-header { margin-bottom: 4px; }
+  .detail-right .issue-title { font-size: 13px; }
+  .detail-right .issue-why { font-size: 12px; margin-bottom: 8px; }
+  .detail-right .fix-box { padding: 8px 10px; }
+  .detail-right .fix-text { font-size: 12px; }
+  .detail-right .section-title { margin-bottom: 8px; }
+  .detail-right .issues-list { gap: 8px; }
   @media (max-width: 900px) { .detail-wrap { grid-template-columns: 1fr; } .detail-right { position: static; max-height: none; } }
   .detail-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 24px; }
   .health-circle { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; font-weight: 700; }
