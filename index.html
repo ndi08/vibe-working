@@ -177,6 +177,16 @@
   .month-table th:first-child { text-align: left; }
   .month-table td { font-size: 13px; padding: 8px 10px; border-bottom: 0.5px solid var(--border); text-align: right; }
   .month-table td:first-child { text-align: left; font-weight: 500; }
+  .review-timeline { margin-bottom: 28px; }
+  .review-entry { position: relative; padding: 12px 16px 12px 24px; border-left: 2px solid var(--border); margin-left: 8px; }
+  .review-entry:last-child { border-left-color: transparent; }
+  .review-dot { position: absolute; left: -6px; top: 16px; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); border: 2px solid var(--surface); }
+  .review-date { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+  .review-name { font-size: 11px; color: var(--blue-text); background: var(--blue-bg); display: inline-block; padding: 1px 7px; border-radius: 10px; margin-bottom: 6px; }
+  .review-notes { font-size: 13px; color: var(--text); line-height: 1.6; }
+  .review-note-line { padding: 2px 0; }
+  .review-note-line.action { color: var(--blue-text); font-weight: 500; }
+  .review-note-line.stats { color: var(--text2); font-family: monospace; font-size: 12px; }
 </style>
 </head>
 <body>
@@ -422,6 +432,33 @@ function extractFromCSV(rows) {
     }
   }
 
+  // Section 3: ASIN Review History (cols ~94-101)
+  // Col 94=Days Ago, 95=Date, 96=Name for section 2 header rows
+  // Col 97=Note text, 99=Days Ago, 100=Date, 101=Name for section 3
+  const sec3 = findSectionCol('3. ASIN Review History');
+  let reviewHistory = [];
+  if (sec3 >= 0) {
+    // Find the date/name/note columns by scanning nearby
+    // Section 2 (Client Notes - ASIN) has dates in cols sec3-3, sec3-2, sec3-1
+    // Section 3 note text is in col sec3, dates in sec3+2, sec3+3, sec3+4
+    let currentEntry = null;
+    for (let r = 3; r < Math.min(rows.length, 500); r++) {
+      const daysAgo = (rows[r][sec3 - 3] || '').trim();
+      const date = (rows[r][sec3 - 2] || '').trim();
+      const name = (rows[r][sec3 - 1] || '').trim();
+      const noteText = (rows[r][sec3] || '').trim();
+      // A new entry starts when we have a date
+      if (date && date.match(/\d+\/\d+\/\d+/)) {
+        if (currentEntry && currentEntry.notes.length) reviewHistory.push(currentEntry);
+        currentEntry = { date: date, name: name, daysAgo: daysAgo, notes: [] };
+        if (noteText) currentEntry.notes.push(noteText);
+      } else if (noteText && currentEntry) {
+        currentEntry.notes.push(noteText);
+      }
+    }
+    if (currentEntry && currentEntry.notes.length) reviewHistory.push(currentEntry);
+  }
+
   // Compute max safe CPC
   const priceNum = parseNum(price);
   const marginPct = parseNum(grossMargin) / 100;
@@ -448,7 +485,8 @@ function extractFromCSV(rows) {
       organicPct,
       revenueWeekly, spendWeekly, profitWeekly, trafficWeekly, acosWeekly,
       monthlyData,
-      family
+      family,
+      reviewHistory
     },
     issues: generateIssues({
       price: priceNum, grossProfit: parseNum(grossProfit), grossMargin: parseNum(grossMargin),
@@ -837,6 +875,24 @@ function renderDetail(id) {
         '<td style="font-weight:600;color:' + (parseNum(f.profit28d) < 0 ? 'var(--red)' : 'var(--green)') + '">' + esc(f.profit28d) + '</td></tr>';
     }
     html += '</tbody></table>';
+  }
+
+  // Review History
+  if (m.reviewHistory && m.reviewHistory.length) {
+    html += '<div class="section-title">ASIN Review History</div><div class="review-timeline">';
+    for (const entry of m.reviewHistory) {
+      html += '<div class="review-entry"><div class="review-dot"></div>' +
+        '<div class="review-date">' + esc(entry.date) + (entry.daysAgo ? ' \u00b7 ' + entry.daysAgo + ' days ago' : '') + '</div>' +
+        (entry.name ? '<span class="review-name">' + esc(entry.name) + '</span>' : '') +
+        '<div class="review-notes">';
+      for (const note of entry.notes) {
+        const isStats = note.match(/^(DOC|DSR|FBA|FBM|Inbound|AIS)[:| ]/i);
+        const isAction = note.match(/^(added|raised|lowered|changed|paused|started|stopped|set|removed|updated)/i);
+        html += '<div class="review-note-line' + (isStats ? ' stats' : isAction ? ' action' : '') + '">' + esc(note) + '</div>';
+      }
+      html += '</div></div>';
+    }
+    html += '</div>';
   }
 
   // Issues
