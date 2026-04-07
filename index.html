@@ -1,13 +1,636 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>temp-project</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<title>ASIN Lens — Amazon ASIN Analyzer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --surface2: #f1f0ed;
+    --border: rgba(0,0,0,0.1);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text2: #5f5e5a;
+    --text3: #9a9994;
+    --blue: #185FA5; --blue-bg: #E6F1FB; --blue-text: #0C447C;
+    --green: #3B6D11; --green-bg: #EAF3DE; --green-text: #27500A;
+    --amber: #854F0B; --amber-bg: #FAEEDA; --amber-text: #633806;
+    --red: #A32D2D; --red-bg: #FCEBEB; --red-text: #791F1F;
+    --gray-bg: #F1EFE8;
+    --radius: 8px; --radius-lg: 12px;
+    --sidebar-w: 220px;
+    --header-h: 56px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18; --surface: #242422; --surface2: #2c2c2a;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+      --text: #f0efe9; --text2: #a8a79f; --text3: #6a6960;
+      --blue: #378ADD; --blue-bg: #0C447C; --blue-text: #B5D4F4;
+      --green: #97C459; --green-bg: #27500A; --green-text: #C0DD97;
+      --amber: #EF9F27; --amber-bg: #633806; --amber-text: #FAC775;
+      --red: #E24B4A; --red-bg: #791F1F; --red-text: #F7C1C1;
+      --gray-bg: #2c2c2a;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+
+  /* Layout */
+  .app { display: flex; height: 100vh; overflow: hidden; }
+  .sidebar { width: var(--sidebar-w); background: var(--surface); border-right: 0.5px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+  .topbar { height: var(--header-h); border-bottom: 0.5px solid var(--border); background: var(--surface); display: flex; align-items: center; padding: 0 24px; gap: 12px; flex-shrink: 0; }
+  .content { flex: 1; overflow-y: auto; padding: 24px; }
+
+  /* Sidebar */
+  .sidebar-logo { padding: 18px 16px 12px; border-bottom: 0.5px solid var(--border); }
+  .logo-mark { display: flex; align-items: center; gap: 8px; }
+  .logo-icon { width: 28px; height: 28px; background: var(--text); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon svg { width: 16px; height: 16px; }
+  .logo-name { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  .logo-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .sidebar-nav { padding: 12px 8px; flex: 1; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius); cursor: pointer; color: var(--text2); font-size: 13px; font-weight: 500; transition: background .12s, color .12s; margin-bottom: 2px; border: none; background: transparent; width: 100%; text-align: left; }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--surface2); color: var(--text); }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: .6; }
+  .nav-item.active svg { opacity: 1; }
+  .nav-badge { margin-left: auto; font-size: 11px; background: var(--red-bg); color: var(--red-text); padding: 1px 7px; border-radius: 10px; font-weight: 600; }
+  .nav-badge.warn { background: var(--amber-bg); color: var(--amber-text); }
+  .sidebar-footer { padding: 12px 16px; border-top: 0.5px solid var(--border); }
+  .api-key-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
+  .api-key-input { width: 100%; font-size: 12px; padding: 6px 8px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--surface2); color: var(--text); font-family: monospace; }
+  .api-key-input:focus { outline: none; border-color: var(--blue); }
+
+  /* Topbar */
+  .page-title { font-size: 16px; font-weight: 600; color: var(--text); }
+  .page-sub { font-size: 12px; color: var(--text3); }
+  .topbar-actions { margin-left: auto; display: flex; gap: 8px; }
+  .btn { padding: 7px 14px; font-size: 13px; font-weight: 500; border-radius: var(--radius); cursor: pointer; border: 0.5px solid var(--border2); background: var(--surface); color: var(--text); transition: background .12s; }
+  .btn:hover { background: var(--surface2); }
+  .btn.primary { background: var(--text); color: var(--surface); border-color: var(--text); }
+  .btn.primary:hover { opacity: .85; }
+  .btn.danger { background: var(--red-bg); color: var(--red-text); border-color: var(--red-bg); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* Metric cards */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .stat-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+  .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+  .stat-val { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; }
+  .stat-val.red { color: var(--red); } .stat-val.amber { color: var(--amber); } .stat-val.green { color: var(--green); }
+  .stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+  /* ASIN grid */
+  .asin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+  .asin-tile { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; transition: border-color .15s; }
+  .asin-tile:hover { border-color: var(--border2); }
+  .asin-tile.critical { border-left: 3px solid var(--red); }
+  .asin-tile.warning { border-left: 3px solid var(--amber); }
+  .asin-tile.ok { border-left: 3px solid var(--green); }
+  .tile-header { padding: 14px 16px 10px; }
+  .tile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+  .tile-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .tile-asin { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: monospace; }
+  .health-badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; flex-shrink: 0; }
+  .health-badge.critical { background: var(--red-bg); color: var(--red-text); }
+  .health-badge.warning { background: var(--amber-bg); color: var(--amber-text); }
+  .health-badge.ok { background: var(--green-bg); color: var(--green-text); }
+  .tile-metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-top: 0.5px solid var(--border); }
+  .tile-metric { background: var(--surface); padding: 10px 12px; }
+  .tm-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
+  .tm-val { font-size: 14px; font-weight: 600; color: var(--text); }
+  .tm-val.red { color: var(--red); } .tm-val.amber { color: var(--amber); } .tm-val.green { color: var(--green); }
+  .tile-issues { padding: 10px 14px; }
+  .mini-issue { display: flex; align-items: flex-start; gap: 7px; padding: 5px 0; border-bottom: 0.5px solid var(--border); font-size: 12px; }
+  .mini-issue:last-child { border-bottom: none; }
+  .mini-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+  .mini-dot.critical { background: var(--red); } .mini-dot.warning { background: var(--amber); } .mini-dot.ok { background: var(--green); }
+  .mini-text { color: var(--text2); line-height: 1.4; }
+  .tile-date { padding: 8px 14px; font-size: 11px; color: var(--text3); border-top: 0.5px solid var(--border); }
+
+  /* Upload / Analyze view */
+  .analyze-wrap { max-width: 700px; }
+  .drop-zone { border: 1.5px dashed var(--border2); border-radius: var(--radius-lg); padding: 40px 24px; text-align: center; cursor: pointer; transition: background .15s, border-color .15s; margin-bottom: 16px; }
+  .drop-zone:hover, .drop-zone.drag { background: var(--surface2); border-color: var(--blue); }
+  .drop-icon { width: 40px; height: 40px; margin: 0 auto 12px; color: var(--text3); }
+  .drop-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .drop-sub { font-size: 13px; color: var(--text3); }
+  .drop-zone input { display: none; }
+  .preview-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+  .preview-thumb { position: relative; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--border); }
+  .preview-thumb img { width: 100px; height: 70px; object-fit: cover; display: block; }
+  .preview-remove { position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%; background: rgba(0,0,0,.7); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; line-height: 1; }
+  .preview-name { font-size: 10px; color: var(--text3); padding: 3px 6px; }
+  .analyze-footer { display: flex; align-items: center; gap: 12px; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--border2); border-top-color: var(--blue); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .status-txt { font-size: 13px; color: var(--text2); }
+  .error-banner { background: var(--red-bg); color: var(--red-text); padding: 12px 16px; border-radius: var(--radius); font-size: 13px; margin-top: 12px; }
+  .tip-box { background: var(--blue-bg); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 20px; }
+  .tip-title { font-size: 12px; font-weight: 600; color: var(--blue-text); margin-bottom: 4px; }
+  .tip-text { font-size: 12px; color: var(--blue-text); line-height: 1.6; opacity: .85; }
+
+  /* Detail view */
+  .detail-wrap { max-width: 800px; }
+  .detail-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 24px; }
+  .health-circle { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; font-weight: 700; }
+  .health-circle.critical { background: var(--red-bg); color: var(--red-text); }
+  .health-circle.warning { background: var(--amber-bg); color: var(--amber-text); }
+  .health-circle.ok { background: var(--green-bg); color: var(--green-text); }
+  .detail-name { font-size: 20px; font-weight: 600; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+  .detail-meta { font-size: 13px; color: var(--text3); }
+  .section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 12px; }
+  .issues-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .issue-card { border-radius: var(--radius-lg); padding: 14px 16px; }
+  .issue-card.critical { background: var(--red-bg); border: 0.5px solid rgba(162,45,45,.2); }
+  .issue-card.warning { background: var(--amber-bg); border: 0.5px solid rgba(133,79,11,.2); }
+  .issue-card.ok { background: var(--green-bg); border: 0.5px solid rgba(59,109,17,.2); }
+  .issue-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .sev-pill { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .04em; }
+  .sev-pill.critical { background: var(--red); color: #fff; }
+  .sev-pill.warning { background: var(--amber); color: #fff; }
+  .sev-pill.ok { background: var(--green); color: #fff; }
+  .issue-title { font-size: 14px; font-weight: 600; }
+  .issue-title.critical { color: var(--red-text); }
+  .issue-title.warning { color: var(--amber-text); }
+  .issue-title.ok { color: var(--green-text); }
+  .issue-why { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+  .fix-box { background: var(--surface); border-radius: var(--radius); padding: 10px 14px; border-left: 3px solid; }
+  .fix-box.critical { border-color: var(--red); }
+  .fix-box.warning { border-color: var(--amber); }
+  .fix-box.ok { border-color: var(--green); }
+  .fix-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 3px; }
+  .fix-text { font-size: 13px; color: var(--text); line-height: 1.5; font-weight: 500; }
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 28px; }
+  .metric-box { background: var(--surface2); border-radius: var(--radius); padding: 12px 14px; }
+  .mb-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+  .mb-val { font-size: 20px; font-weight: 600; color: var(--text); }
+  .mb-val.red { color: var(--red); } .mb-val.amber { color: var(--amber); } .mb-val.green { color: var(--green); }
+  .mb-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .waterfall { margin-bottom: 28px; }
+  .wf-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .wf-label { width: 130px; font-size: 12px; color: var(--text2); flex-shrink: 0; }
+  .wf-track { flex: 1; background: var(--surface2); border-radius: 4px; height: 24px; overflow: hidden; }
+  .wf-fill { height: 100%; display: flex; align-items: center; padding-left: 8px; font-size: 11px; font-weight: 600; border-radius: 4px; }
+  .wf-num { width: 56px; font-size: 12px; font-weight: 600; color: var(--text); text-align: right; }
+  .chart-section { margin-bottom: 28px; }
+  .chart-wrap { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+  .ask-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 0.5px solid var(--border); }
+
+  /* Empty state */
+  .empty { text-align: center; padding: 80px 24px; }
+  .empty-icon { width: 56px; height: 56px; background: var(--surface2); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+  .empty-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .empty-sub { font-size: 13px; color: var(--text3); margin-bottom: 24px; line-height: 1.6; }
+
+  /* Misc */
+  .back-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text2); background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 20px; }
+  .back-btn:hover { color: var(--text); }
+  .divider { height: 0.5px; background: var(--border); margin: 20px 0; }
+  .tag-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 11px; padding: 3px 9px; border-radius: 20px; background: var(--surface2); color: var(--text2); border: 0.5px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 12L6 5L9 9L11 7L14 12H2Z" fill="white" opacity=".9"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-name">ASIN Lens</div>
+          <div class="logo-sub">Amazon ASIN Analyzer</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" id="nav-dashboard" onclick="navigate('dashboard')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+        Dashboard
+        <span class="nav-badge" id="crit-badge" style="display:none">0</span>
+      </button>
+      <button class="nav-item" id="nav-analyze" onclick="navigate('analyze')">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/></svg>
+        Analyze ASIN
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="api-key-label">Anthropic API Key</div>
+      <input class="api-key-input" type="password" id="apiKeyInput" placeholder="sk-ant-..." oninput="saveKey(this.value)">
+      <div style="font-size:10px;color:var(--text3);margin-top:5px;line-height:1.5">Key stored locally in your browser. Never sent anywhere except Anthropic.</div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="page-title">Dashboard</div>
+        <div class="page-sub" id="page-sub">All your ASINs at a glance</div>
+      </div>
+      <div class="topbar-actions" id="topbar-actions">
+        <button class="btn primary" onclick="navigate('analyze')">+ Analyze new ASIN</button>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<script>
+// --- State ---
+let currentView = 'dashboard';
+let pendingFiles = [];
+let currentDetailId = null;
+
+function getKey() { return localStorage.getItem('asin_api_key') || ''; }
+function saveKey(v) { localStorage.setItem('asin_api_key', v); }
+function getASINs() { try { return JSON.parse(localStorage.getItem('asin_records') || '[]'); } catch { return []; } }
+function saveASINs(arr) { localStorage.setItem('asin_records', JSON.stringify(arr)); }
+function getASIN(id) { return getASINs().find(a => a.id === id); }
+function upsertASIN(asin) {
+  const arr = getASINs().filter(a => a.id !== asin.id);
+  arr.unshift(asin);
+  saveASINs(arr);
+}
+function deleteASIN(id) { saveASINs(getASINs().filter(a => a.id !== id)); }
+
+// --- Navigation ---
+function navigate(view, param) {
+  currentView = view;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + (view === 'detail' ? 'dashboard' : view));
+  if (navEl) navEl.classList.add('active');
+  if (view === 'dashboard') renderDashboard();
+  else if (view === 'analyze') renderAnalyze();
+  else if (view === 'detail') renderDetail(param);
+  updateBadge();
+}
+
+function updateBadge() {
+  const asins = getASINs();
+  const crit = asins.filter(a => getHealth(a.issues) === 'critical').length;
+  const badge = document.getElementById('crit-badge');
+  if (badge) { badge.textContent = crit; badge.style.display = crit ? '' : 'none'; }
+}
+
+// --- Dashboard ---
+function renderDashboard() {
+  document.getElementById('page-title').textContent = 'Dashboard';
+  document.getElementById('page-sub').textContent = 'All your ASINs at a glance';
+  document.getElementById('topbar-actions').innerHTML = '<button class="btn primary" onclick="navigate(\'analyze\')">+ Analyze new ASIN</button>';
+  const asins = getASINs();
+  const content = document.getElementById('content');
+  if (!asins.length) {
+    content.innerHTML = '<div class="empty">' +
+      '<div class="empty-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="3" width="9" height="9" rx="2" fill="currentColor" opacity=".3"/><rect x="16" y="3" width="9" height="9" rx="2" fill="currentColor" opacity=".3"/><rect x="3" y="16" width="9" height="9" rx="2" fill="currentColor" opacity=".3"/><rect x="16" y="16" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/></svg></div>' +
+      '<div class="empty-title">No ASINs yet</div>' +
+      '<div class="empty-sub">Upload screenshots from your Amazon seller tool<br>and get an instant diagnosis for each ASIN.</div>' +
+      '<button class="btn primary" onclick="navigate(\'analyze\')">Analyze your first ASIN</button>' +
+      '</div>';
+    return;
+  }
+  const crit = asins.filter(a => getHealth(a.issues) === 'critical').length;
+  const warn = asins.filter(a => getHealth(a.issues) === 'warning').length;
+  const ok = asins.filter(a => getHealth(a.issues) === 'ok').length;
+  const avgAcos = avg(asins.map(a => parseNum(a.metrics?.acos)));
+  let html = '<div class="stat-grid">' +
+    '<div class="stat-card"><div class="stat-label">Total ASINs</div><div class="stat-val">' + asins.length + '</div><div class="stat-sub">tracked</div></div>' +
+    '<div class="stat-card"><div class="stat-label">Critical</div><div class="stat-val ' + (crit ? 'red' : '') + '">' + crit + '</div><div class="stat-sub">need urgent action</div></div>' +
+    '<div class="stat-card"><div class="stat-label">Need attention</div><div class="stat-val ' + (warn ? 'amber' : '') + '">' + warn + '</div><div class="stat-sub">warnings found</div></div>' +
+    '<div class="stat-card"><div class="stat-label">Healthy</div><div class="stat-val ' + (ok ? 'green' : '') + '">' + ok + '</div><div class="stat-sub">on track</div></div>' +
+    (avgAcos ? '<div class="stat-card"><div class="stat-label">Avg ACoS</div><div class="stat-val ' + (avgAcos > 30 ? 'red' : avgAcos > 15 ? 'amber' : 'green') + '">' + avgAcos.toFixed(0) + '%</div><div class="stat-sub">across all ASINs</div></div>' : '') +
+    '</div><div class="asin-grid">';
+  const sorted = [...asins].sort((a,b) => { const r = {critical:0,warning:1,ok:2}; return r[getHealth(a.issues)] - r[getHealth(b.issues)]; });
+  for (const a of sorted) html += tileHTML(a);
+  html += '</div>';
+  content.innerHTML = html;
+}
+
+function tileHTML(a) {
+  const health = getHealth(a.issues);
+  const topIssues = a.issues.slice(0,3);
+  const gp = parseNum(a.metrics?.grossProfit);
+  const gpColor = gp < 0 ? 'red' : gp < 3 ? 'amber' : 'green';
+  const ac = parseNum(a.metrics?.acos);
+  const be = parseNum(a.metrics?.breakEvenAcos);
+  const acColor = ac > be + 10 ? 'red' : ac > be ? 'amber' : 'green';
+  return '<div class="asin-tile ' + health + '" onclick="navigate(\'detail\',\'' + a.id + '\')">' +
+    '<div class="tile-header"><div class="tile-top"><div><div class="tile-name">' + esc(a.productName) + '</div><div class="tile-asin">' + esc(a.asin || '\u2014') + '</div></div>' +
+    '<span class="health-badge ' + health + '">' + (health === 'ok' ? 'Healthy' : health.charAt(0).toUpperCase()+health.slice(1)) + '</span></div></div>' +
+    '<div class="tile-metrics">' +
+    '<div class="tile-metric"><div class="tm-label">Gross profit</div><div class="tm-val ' + gpColor + '">' + (a.metrics?.grossProfit || '\u2014') + '</div></div>' +
+    '<div class="tile-metric"><div class="tm-label">ACoS</div><div class="tm-val ' + acColor + '">' + (a.metrics?.acos || '\u2014') + '</div></div>' +
+    '<div class="tile-metric"><div class="tm-label">TACOS</div><div class="tm-val ' + (parseNum(a.metrics?.tacos)>30?'red':parseNum(a.metrics?.tacos)>15?'amber':'green') + '">' + (a.metrics?.tacos || '\u2014') + '</div></div>' +
+    '</div>' +
+    '<div class="tile-issues">' + topIssues.map(i => '<div class="mini-issue"><div class="mini-dot ' + i.severity + '"></div><div class="mini-text">' + esc(i.title) + '</div></div>').join('') + '</div>' +
+    '<div class="tile-date">Last analyzed ' + timeAgo(a.analyzedAt) + '</div></div>';
+}
+
+// --- Analyze ---
+function renderAnalyze() {
+  pendingFiles = [];
+  document.getElementById('page-title').textContent = 'Analyze ASIN';
+  document.getElementById('page-sub').textContent = 'Drop screenshots from your seller tool';
+  document.getElementById('topbar-actions').innerHTML = '';
+  document.getElementById('content').innerHTML =
+  '<div class="analyze-wrap">' +
+    '<div class="tip-box"><div class="tip-title">What to screenshot</div>' +
+    '<div class="tip-text">Any section works \u2014 Overall Results (section 24), PPC Results (section 25), Margin &amp; Bids, or Monthly Results. The more sections you include, the deeper the analysis. You can upload multiple screenshots for one ASIN.</div></div>' +
+    '<div class="drop-zone" id="dropZone" onclick="document.getElementById(\'fileIn\').click()" ondragover="doDrag(event,true)" ondragleave="doDrag(event,false)" ondrop="doDrop(event)" onpaste="handlePaste(event)">' +
+    '<input type="file" id="fileIn" accept="image/*" multiple onchange="addFiles(this.files)">' +
+    '<div class="drop-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="8" width="32" height="24" rx="3"/><path d="M14 20l4-5 4 5 3-3 5 7H10l4-4z"/><circle cx="26" cy="16" r="2" fill="currentColor" stroke="none"/></svg></div>' +
+    '<div class="drop-title">Drop screenshots here</div>' +
+    '<div class="drop-sub">or click to browse \u00b7 or just <strong>Ctrl+V</strong> to paste</div></div>' +
+    '<div class="preview-row" id="previewRow"></div>' +
+    '<div class="analyze-footer">' +
+    '<button class="btn primary" id="analyzeBtn" onclick="runAnalysis()" disabled>Analyze screenshots</button>' +
+    '<div id="spinRow" style="display:none;align-items:center;gap:8px"><div class="spinner"></div><span class="status-txt" id="statusTxt"></span></div>' +
+    '</div>' +
+    '<div id="errBanner" class="error-banner" style="display:none"></div></div>';
+}
+
+function handlePaste(e) {
+  const items = (e.clipboardData || e.originalEvent?.clipboardData)?.items;
+  if (!items) return;
+  for (const item of items) {
+    if (!item.type.startsWith('image/')) continue;
+    const file = item.getAsFile();
+    if (file) addFiles([file]);
+  }
+}
+
+function doDrag(e, on) { e.preventDefault(); document.getElementById('dropZone')?.classList.toggle('drag', on); }
+function doDrop(e) { e.preventDefault(); document.getElementById('dropZone')?.classList.remove('drag'); addFiles(e.dataTransfer.files); }
+
+function addFiles(fl) {
+  for (const f of fl) {
+    if (!f.type.startsWith('image/')) continue;
+    pendingFiles.push(f);
+    const idx = pendingFiles.length - 1;
+    const reader = new FileReader();
+    reader.onload = ev => addThumb(ev.target.result, f.name, idx);
+    reader.readAsDataURL(f);
+  }
+  const btn = document.getElementById('analyzeBtn');
+  if (btn) btn.disabled = pendingFiles.filter(Boolean).length === 0;
+}
+
+function addThumb(src, name, idx) {
+  const row = document.getElementById('previewRow');
+  if (!row) return;
+  const d = document.createElement('div');
+  d.className = 'preview-thumb'; d.id = 'thumb-'+idx;
+  d.innerHTML = '<img src="' + src + '"><button class="preview-remove" onclick="removeThumb(' + idx + ')">\u00d7</button><div class="preview-name">' + name.slice(0,16) + '</div>';
+  row.appendChild(d);
+}
+
+function removeThumb(idx) {
+  pendingFiles[idx] = null;
+  document.getElementById('thumb-'+idx)?.remove();
+  const btn = document.getElementById('analyzeBtn');
+  if (btn) btn.disabled = pendingFiles.filter(Boolean).length === 0;
+}
+
+function setStatus(msg, loading) {
+  const row = document.getElementById('spinRow');
+  if (!row) return;
+  row.style.display = msg ? 'flex' : 'none';
+  const txt = document.getElementById('statusTxt');
+  if (txt) txt.textContent = msg;
+  const spin = row.querySelector('.spinner');
+  if (spin) spin.style.display = loading ? '' : 'none';
+}
+
+async function runAnalysis() {
+  const key = getKey() || document.getElementById('apiKeyInput')?.value;
+  if (!key) { showErr('Please enter your Anthropic API key in the sidebar first.'); return; }
+  const valid = pendingFiles.filter(Boolean);
+  if (!valid.length) return;
+  const btn = document.getElementById('analyzeBtn');
+  if (btn) btn.disabled = true;
+  document.getElementById('errBanner').style.display = 'none';
+  setStatus('Reading your screenshots\u2026', true);
+  try {
+    const imageContents = await Promise.all(valid.map(async f => {
+      const b64 = await toB64(f);
+      return { type:'image', source:{ type:'base64', media_type: f.type, data: b64 } };
+    }));
+    setStatus('Extracting data and running diagnosis\u2026', true);
+    const prompt = 'You are an expert Amazon seller consultant specializing in PPC profitability analysis. Analyze these screenshots from an Amazon seller management tool.\n\nExtract every ASIN visible and return a JSON array. For EACH ASIN return EXACTLY this structure:\n{\n  "asin": "BXXXXXXXXXX or empty string",\n  "productName": "concise product name",\n  "metrics": {\n    "price": "$X.XX or \u2014",\n    "cogs": "$X.XX or \u2014",\n    "fbaFee": "$X.XX or \u2014",\n    "referralFee": "$X.XX or X% or \u2014",\n    "grossProfit": "$X.XX (use negative sign if loss) or \u2014",\n    "grossMargin": "X% or \u2014",\n    "breakEvenAcos": "X% (this equals the gross margin %) or \u2014",\n    "acos": "X% or \u2014",\n    "acosVsTarget": "above|near|ok",\n    "tacos": "X% or \u2014",\n    "maxSafeCpc": "$X.XX (= price \u00d7 grossMargin% \u00d7 convRate%) or \u2014",\n    "traffic": "number or \u2014",\n    "revenue": "$X or \u2014",\n    "ppcSpend": "$X or \u2014",\n    "ppcSales": "$X or \u2014",\n    "units": "number or \u2014",\n    "convRate": "X% or \u2014",\n    "maxBid": "$X.XX or \u2014",\n    "inventory": "X units or \u2014",\n    "daysOfCover": "X days or \u2014",\n    "monthlyData": [{"month":"Apr 26","revenue":38,"grossProfit":-10}]\n  },\n  "issues": [\n    {\n      "severity": "critical|warning|ok",\n      "title": "Short plain-English problem title",\n      "why": "2-3 sentences explaining what this number means and WHY it is a problem. Use actual numbers from the screenshot.",\n      "fix": "Specific actionable fix with exact numbers. E.g. \'Lower max bid from $1.10 to $0.16\' not just \'lower bids\'."\n    }\n  ]\n}\n\nSeverity rules \u2014 be strict:\nCRITICAL: gross profit negative, ACoS > break-even by 10+ pts, TACOS > 30%, max bid > 2\u00d7 max safe CPC, traffic < 50 sessions, days of cover < 30, conversion rate < 2%\nWARNING: ACoS above break-even 5-10pts, TACOS 15-30%, conversion rate 2-6%, traffic 50-150, days of cover 30-60, high PPC spend % of revenue\nOK: only for genuine strengths (e.g. good CVR, healthy inventory, profitable campaign)\n\nSort issues: critical first, then warning, then ok. Include 2-6 issues total. Be specific and use the actual numbers you see.\n\nReturn ONLY valid JSON array. No markdown fences, no explanation text.';
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-opus-4-5', max_tokens: 2000, messages: [{ role:'user', content: [...imageContents, { type:'text', text: prompt }] }] })
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    const text = data.content.map(c => c.text||'').join('').replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(text);
+    if (!parsed.length) throw new Error('No ASIN data found. Try including the Overall Results or Margin & Bids sections.');
+    for (const a of parsed) {
+      a.id = a.asin || ('asin_' + Date.now() + '_' + Math.random().toString(36).slice(2,6));
+      a.analyzedAt = new Date().toISOString();
+      upsertASIN(a);
+    }
+    setStatus('Done \u2014 ' + parsed.length + ' ASIN' + (parsed.length>1?'s':'') + ' saved.', false);
+    if (btn) btn.disabled = false;
+    pendingFiles = [];
+    updateBadge();
+    setTimeout(() => navigate('dashboard'), 800);
+  } catch(e) {
+    showErr(e.message);
+    setStatus('', false);
+    if (btn) btn.disabled = false;
+  }
+}
+
+function showErr(msg) {
+  const el = document.getElementById('errBanner');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+
+// --- Detail ---
+function renderDetail(id) {
+  currentDetailId = id;
+  const a = getASIN(id);
+  if (!a) { navigate('dashboard'); return; }
+  document.getElementById('page-title').textContent = a.productName || a.asin || 'ASIN Detail';
+  document.getElementById('page-sub').textContent = a.asin || '';
+  document.getElementById('topbar-actions').innerHTML =
+    '<button class="btn" onclick="confirmDelete(\'' + id + '\')">Delete</button>' +
+    '<button class="btn primary" onclick="reAnalyze()">Re-analyze</button>';
+  const health = getHealth(a.issues);
+  const m = a.metrics || {};
+  const gp = parseNum(m.grossProfit);
+  const ac = parseNum(m.acos);
+  const be = parseNum(m.breakEvenAcos);
+  const tc = parseNum(m.tacos);
+  const tr = parseNum(m.traffic);
+  const gpC = gp < 0 ? 'red' : gp < 3 ? 'amber' : 'green';
+  const acC = ac > be + 10 ? 'red' : ac > be ? 'amber' : 'green';
+  const tcC = tc > 30 ? 'red' : tc > 15 ? 'amber' : 'green';
+  const trC = tr < 50 ? 'red' : tr < 150 ? 'amber' : 'green';
+
+  let html = '<div class="detail-wrap">' +
+    '<button class="back-btn" onclick="navigate(\'dashboard\')">' +
+    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>' +
+    'Back to dashboard</button>' +
+    '<div class="detail-header">' +
+    '<div class="health-circle ' + health + '">' + (health==='critical'?'!':health==='warning'?'~':'\u2713') + '</div>' +
+    '<div><div class="detail-name">' + esc(a.productName) + '</div>' +
+    '<div class="detail-meta">' + esc(a.asin||'ASIN unknown') + ' \u00b7 Analyzed ' + timeAgo(a.analyzedAt) + '</div></div></div>' +
+    '<div class="section-title">Key metrics</div>' +
+    '<div class="metrics-grid">' +
+    '<div class="metric-box"><div class="mb-label">Gross profit/unit</div><div class="mb-val ' + gpC + '">' + (m.grossProfit||'\u2014') + '</div><div class="mb-sub">after FBA + referral + COGS</div></div>' +
+    '<div class="metric-box"><div class="mb-label">Gross margin</div><div class="mb-val ' + gpC + '">' + (m.grossMargin||'\u2014') + '</div><div class="mb-sub">= break-even ACoS</div></div>' +
+    '<div class="metric-box"><div class="mb-label">Actual ACoS</div><div class="mb-val ' + acC + '">' + (m.acos||'\u2014') + '</div><div class="mb-sub">target: ' + (m.breakEvenAcos||'\u2014') + '</div></div>' +
+    '<div class="metric-box"><div class="mb-label">TACOS</div><div class="mb-val ' + tcC + '">' + (m.tacos||'\u2014') + '</div><div class="mb-sub">total ad cost of sales</div></div>' +
+    '<div class="metric-box"><div class="mb-label">Max safe CPC</div><div class="mb-val">' + (m.maxSafeCpc||'\u2014') + '</div><div class="mb-sub">at break-even ACoS</div></div>' +
+    '<div class="metric-box"><div class="mb-label">28d traffic</div><div class="mb-val ' + trC + '">' + (m.traffic||'\u2014') + '</div><div class="mb-sub">sessions</div></div>' +
+    '<div class="metric-box"><div class="mb-label">28d revenue</div><div class="mb-val">' + (m.revenue||'\u2014') + '</div><div class="mb-sub">' + (m.units||'\u2014') + ' units</div></div>' +
+    '<div class="metric-box"><div class="mb-label">Inventory</div><div class="mb-val">' + (m.inventory||'\u2014') + '</div><div class="mb-sub">' + (m.daysOfCover||'\u2014') + ' days cover</div></div>' +
+    '</div>';
+
+  if (m.price && m.grossProfit) {
+    const price = parseNum(m.price);
+    const fba = parseNum(m.fbaFee);
+    const ref = parseNum(m.referralFee) || (price * 0.15);
+    const cogs = parseNum(m.cogs);
+    const gpr = parseNum(m.grossProfit);
+    html += '<div class="section-title">Unit economics breakdown</div><div class="waterfall">' +
+      wfRow('Sale price', 100, '#185FA5', '#B5D4F4', m.price) +
+      (fba ? wfRow('FBA fee', Math.abs(fba/price*100), '#888780', '#D3D1C7', '-'+m.fbaFee) : '') +
+      (ref ? wfRow('Referral fee', Math.abs(ref/price*100), '#888780', '#D3D1C7', '-$'+ref.toFixed(2)) : '') +
+      (cogs ? wfRow('COGS', Math.abs(cogs/price*100), '#888780', '#D3D1C7', '-'+m.cogs) : '') +
+      wfRow('Gross profit', Math.max(0, Math.abs(gpr/price*100)), gpr>=0?'#3B6D11':'#A32D2D', gpr>=0?'#C0DD97':'#F7C1C1', m.grossProfit) +
+      '</div>';
+  }
+
+  if (m.monthlyData && m.monthlyData.length > 1) {
+    html += '<div class="chart-section"><div class="section-title">Revenue &amp; gross profit trend</div>' +
+      '<div class="chart-wrap"><div style="position:relative;height:200px"><canvas id="trendChart"></canvas></div></div></div>';
+  }
+
+  html += '<div class="section-title">What\'s wrong &amp; how to fix it</div>' +
+    '<div class="issues-list">' + a.issues.map(i => issueCardHTML(i)).join('') + '</div>' +
+    '<div class="ask-row">' +
+    '<button class="btn" onclick="sendPrompt(\'Help me build a specific PPC bid reduction plan for ' + esc(a.productName) + ' (' + esc(a.asin||'this ASIN') + '). Gross profit is ' + (m.grossProfit||'low') + ' per unit and current ACoS is ' + (m.acos||'high') + '.\')">Get PPC plan \u2197</button>' +
+    '<button class="btn" onclick="sendPrompt(\'What are the best ways to improve organic ranking for ' + esc(a.productName) + ' on Amazon? Traffic is at ' + (m.traffic||'very low') + ' sessions in 28 days.\')">Improve ranking \u2197</button>' +
+    '<button class="btn" onclick="sendPrompt(\'How can I improve the gross margin for ' + esc(a.productName) + '? Currently at ' + (m.grossMargin||'very low margin') + ' \u2014 what levers do I have?\')">Improve margins \u2197</button>' +
+    '</div></div>';
+
+  document.getElementById('content').innerHTML = html;
+
+  if (m.monthlyData && m.monthlyData.length > 1) {
+    const labels = m.monthlyData.map(d => d.month);
+    const revData = m.monthlyData.map(d => d.revenue || 0);
+    const gpData = m.monthlyData.map(d => d.grossProfit || 0);
+    new Chart(document.getElementById('trendChart'), {
+      data: {
+        labels,
+        datasets: [
+          { type:'bar', label:'Revenue', data: revData, backgroundColor: '#185FA5', borderRadius: 3, order: 2 },
+          { type:'line', label:'Gross profit', data: gpData, borderColor: '#E24B4A', backgroundColor: 'transparent', tension: .3, pointRadius: 3, borderWidth: 2, order: 1 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { font:{size:11}, color:'#888780', autoSkip: false, maxRotation: 45 }, grid:{display:false} }, y: { ticks: { font:{size:11}, color:'#888780', callback: v => '$'+v }, grid:{color:'rgba(136,135,128,.12)'} } } }
+    });
+  }
+}
+
+function wfRow(label, pct, fill, textColor, val) {
+  return '<div class="wf-row"><div class="wf-label">' + label + '</div>' +
+    '<div class="wf-track"><div class="wf-fill" style="width:' + Math.min(100,pct) + '%;background:' + fill + ';color:' + textColor + '"></div></div>' +
+    '<div class="wf-num">' + val + '</div></div>';
+}
+
+function issueCardHTML(i) {
+  return '<div class="issue-card ' + i.severity + '">' +
+    '<div class="issue-header"><span class="sev-pill ' + i.severity + '">' + i.severity + '</span>' +
+    '<span class="issue-title ' + i.severity + '">' + esc(i.title) + '</span></div>' +
+    '<div class="issue-why">' + esc(i.why) + '</div>' +
+    '<div class="fix-box ' + i.severity + '"><div class="fix-label">Fix it</div>' +
+    '<div class="fix-text">' + esc(i.fix) + '</div></div></div>';
+}
+
+function confirmDelete(id) {
+  if (confirm('Delete this ASIN record?')) { deleteASIN(id); updateBadge(); navigate('dashboard'); }
+}
+
+function reAnalyze() {
+  navigate('analyze');
+}
+
+// --- Helpers ---
+function getHealth(issues) {
+  if (!issues) return 'ok';
+  if (issues.some(i => i.severity === 'critical')) return 'critical';
+  if (issues.some(i => i.severity === 'warning')) return 'warning';
+  return 'ok';
+}
+
+function parseNum(v) {
+  if (v === null || v === undefined || v === '\u2014') return 0;
+  return parseFloat(String(v).replace(/[$,%\s]/g, '')) || 0;
+}
+
+function avg(arr) {
+  const valid = arr.filter(Boolean);
+  return valid.length ? valid.reduce((a,b) => a+b, 0) / valid.length : 0;
+}
+
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function timeAgo(iso) {
+  if (!iso) return 'just now';
+  const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+async function toB64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// --- Boot ---
+const savedKey = localStorage.getItem('asin_api_key') || '';
+const keyInput = document.getElementById('apiKeyInput');
+if (keyInput && savedKey) keyInput.value = savedKey;
+navigate('dashboard');
+updateBadge();
+document.addEventListener('paste', function(e) {
+  const items = (e.clipboardData || e.originalEvent?.clipboardData)?.items;
+  const hasImage = items && Array.from(items).some(i => i.type.startsWith('image/'));
+  if (!hasImage) return;
+  if (currentView !== 'analyze') {
+    navigate('analyze');
+    setTimeout(() => handlePaste(e), 120);
+  } else {
+    handlePaste(e);
+  }
+});
+</script>
+</body>
 </html>
