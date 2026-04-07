@@ -117,7 +117,10 @@
   .file-size { font-size: 12px; color: var(--text3); }
   .file-remove { margin-left: auto; background: none; border: none; color: var(--text3); cursor: pointer; font-size: 18px; }
 
-  .detail-wrap { max-width: 800px; }
+  .detail-wrap { max-width: 1200px; display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
+  .detail-left { min-width: 0; }
+  .detail-right { position: sticky; top: 0; max-height: calc(100vh - var(--header-h) - 48px); overflow-y: auto; }
+  @media (max-width: 900px) { .detail-wrap { grid-template-columns: 1fr; } .detail-right { position: static; max-height: none; } }
   .detail-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 24px; }
   .health-circle { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; font-weight: 700; }
   .health-circle.critical { background: var(--red-bg); color: var(--red-text); }
@@ -812,11 +815,11 @@ function renderDetail(id) {
   const tcC = tc > 30 ? 'red' : tc > 15 ? 'amber' : 'green';
   const trC = tr < 50 ? 'red' : tr < 150 ? 'amber' : 'green';
 
-  let html = '<div class="detail-wrap">' +
-    '<button class="back-btn" onclick="navigate(\'dashboard\')"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg> Back to dashboard</button>' +
+  let html = '<button class="back-btn" onclick="navigate(\'dashboard\')"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg> Back to dashboard</button>' +
     '<div class="detail-header"><div class="health-circle ' + health + '">' + (health==='critical'?'!':health==='warning'?'~':'\u2713') + '</div>' +
     '<div><div class="detail-name">' + esc(a.productName) + '</div>' +
-    '<div class="detail-meta">' + esc(a.asin) + ' \u00b7 Imported ' + timeAgo(a.analyzedAt) + '</div></div></div>';
+    '<div class="detail-meta">' + esc(a.asin) + ' \u00b7 Imported ' + timeAgo(a.analyzedAt) + '</div></div></div>' +
+    '<div class="detail-wrap"><div class="detail-left">';
 
   // Key metrics
   html += '<div class="section-title">Key Metrics</div><div class="metrics-grid">' +
@@ -895,9 +898,10 @@ function renderDetail(id) {
     html += '</div>';
   }
 
-  // Issues
-  html += '<div class="section-title">Diagnosis &amp; Action Items</div><div class="issues-list">' +
-    a.issues.map(i => issueCardHTML(i)).join('') + '</div></div>';
+  // Close left column, open right column with issues
+  html += '</div><div class="detail-right">' +
+    '<div class="section-title">Diagnosis &amp; Action Items</div><div class="issues-list">' +
+    a.issues.map(i => issueCardHTML(i)).join('') + '</div></div></div>';
 
   document.getElementById('content').innerHTML = html;
 
