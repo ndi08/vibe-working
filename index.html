@@ -8,22 +8,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   :root {
-    --bg: #f7f7f5;
-    --surface: #ffffff;
-    --surface2: #f1f0ed;
-    --border: rgba(0,0,0,0.1);
-    --border2: rgba(0,0,0,0.18);
-    --text: #1a1a18;
-    --text2: #5f5e5a;
-    --text3: #9a9994;
+    --bg: #f7f7f5; --surface: #ffffff; --surface2: #f1f0ed;
+    --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18; --text2: #5f5e5a; --text3: #9a9994;
     --blue: #185FA5; --blue-bg: #E6F1FB; --blue-text: #0C447C;
     --green: #3B6D11; --green-bg: #EAF3DE; --green-text: #27500A;
     --amber: #854F0B; --amber-bg: #FAEEDA; --amber-text: #633806;
     --red: #A32D2D; --red-bg: #FCEBEB; --red-text: #791F1F;
-    --gray-bg: #F1EFE8;
     --radius: 8px; --radius-lg: 12px;
-    --sidebar-w: 220px;
-    --header-h: 56px;
+    --sidebar-w: 220px; --header-h: 56px;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -34,20 +27,17 @@
       --green: #97C459; --green-bg: #27500A; --green-text: #C0DD97;
       --amber: #EF9F27; --amber-bg: #633806; --amber-text: #FAC775;
       --red: #E24B4A; --red-bg: #791F1F; --red-text: #F7C1C1;
-      --gray-bg: #2c2c2a;
     }
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
 
-  /* Layout */
   .app { display: flex; height: 100vh; overflow: hidden; }
   .sidebar { width: var(--sidebar-w); background: var(--surface); border-right: 0.5px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
   .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
   .topbar { height: var(--header-h); border-bottom: 0.5px solid var(--border); background: var(--surface); display: flex; align-items: center; padding: 0 24px; gap: 12px; flex-shrink: 0; }
   .content { flex: 1; overflow-y: auto; padding: 24px; }
 
-  /* Sidebar */
   .sidebar-logo { padding: 18px 16px 12px; border-bottom: 0.5px solid var(--border); }
   .logo-mark { display: flex; align-items: center; gap: 8px; }
   .logo-icon { width: 28px; height: 28px; background: var(--text); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
@@ -61,13 +51,8 @@
   .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: .6; }
   .nav-item.active svg { opacity: 1; }
   .nav-badge { margin-left: auto; font-size: 11px; background: var(--red-bg); color: var(--red-text); padding: 1px 7px; border-radius: 10px; font-weight: 600; }
-  .nav-badge.warn { background: var(--amber-bg); color: var(--amber-text); }
-  .sidebar-footer { padding: 12px 16px; border-top: 0.5px solid var(--border); }
-  .api-key-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
-  .api-key-input { width: 100%; font-size: 12px; padding: 6px 8px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--surface2); color: var(--text); font-family: monospace; }
-  .api-key-input:focus { outline: none; border-color: var(--blue); }
+  .sidebar-footer { padding: 12px 16px; border-top: 0.5px solid var(--border); font-size: 11px; color: var(--text3); line-height: 1.6; }
 
-  /* Topbar */
   .page-title { font-size: 16px; font-weight: 600; color: var(--text); }
   .page-sub { font-size: 12px; color: var(--text3); }
   .topbar-actions { margin-left: auto; display: flex; gap: 8px; }
@@ -75,10 +60,8 @@
   .btn:hover { background: var(--surface2); }
   .btn.primary { background: var(--text); color: var(--surface); border-color: var(--text); }
   .btn.primary:hover { opacity: .85; }
-  .btn.danger { background: var(--red-bg); color: var(--red-text); border-color: var(--red-bg); }
   .btn:disabled { opacity: .4; cursor: not-allowed; }
 
-  /* Metric cards */
   .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
   .stat-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
   .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
@@ -86,7 +69,6 @@
   .stat-val.red { color: var(--red); } .stat-val.amber { color: var(--amber); } .stat-val.green { color: var(--green); }
   .stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
 
-  /* ASIN grid */
   .asin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
   .asin-tile { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; transition: border-color .15s; }
   .asin-tile:hover { border-color: var(--border2); }
@@ -114,7 +96,6 @@
   .mini-text { color: var(--text2); line-height: 1.4; }
   .tile-date { padding: 8px 14px; font-size: 11px; color: var(--text3); border-top: 0.5px solid var(--border); }
 
-  /* Upload / Analyze view */
   .analyze-wrap { max-width: 700px; }
   .drop-zone { border: 1.5px dashed var(--border2); border-radius: var(--radius-lg); padding: 40px 24px; text-align: center; cursor: pointer; transition: background .15s, border-color .15s; margin-bottom: 16px; }
   .drop-zone:hover, .drop-zone.drag { background: var(--surface2); border-color: var(--blue); }
@@ -122,21 +103,20 @@
   .drop-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
   .drop-sub { font-size: 13px; color: var(--text3); }
   .drop-zone input { display: none; }
-  .preview-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
-  .preview-thumb { position: relative; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--border); }
-  .preview-thumb img { width: 100px; height: 70px; object-fit: cover; display: block; }
-  .preview-remove { position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%; background: rgba(0,0,0,.7); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; line-height: 1; }
-  .preview-name { font-size: 10px; color: var(--text3); padding: 3px 6px; }
   .analyze-footer { display: flex; align-items: center; gap: 12px; }
   .spinner { width: 16px; height: 16px; border: 2px solid var(--border2); border-top-color: var(--blue); border-radius: 50%; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .status-txt { font-size: 13px; color: var(--text2); }
   .error-banner { background: var(--red-bg); color: var(--red-text); padding: 12px 16px; border-radius: var(--radius); font-size: 13px; margin-top: 12px; }
+  .success-banner { background: var(--green-bg); color: var(--green-text); padding: 12px 16px; border-radius: var(--radius); font-size: 13px; margin-top: 12px; }
   .tip-box { background: var(--blue-bg); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 20px; }
   .tip-title { font-size: 12px; font-weight: 600; color: var(--blue-text); margin-bottom: 4px; }
   .tip-text { font-size: 12px; color: var(--blue-text); line-height: 1.6; opacity: .85; }
+  .file-info { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .file-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .file-size { font-size: 12px; color: var(--text3); }
+  .file-remove { margin-left: auto; background: none; border: none; color: var(--text3); cursor: pointer; font-size: 18px; }
 
-  /* Detail view */
   .detail-wrap { max-width: 800px; }
   .detail-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 24px; }
   .health-circle { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; font-weight: 700; }
@@ -157,14 +137,10 @@
   .sev-pill.warning { background: var(--amber); color: #fff; }
   .sev-pill.ok { background: var(--green); color: #fff; }
   .issue-title { font-size: 14px; font-weight: 600; }
-  .issue-title.critical { color: var(--red-text); }
-  .issue-title.warning { color: var(--amber-text); }
-  .issue-title.ok { color: var(--green-text); }
+  .issue-title.critical { color: var(--red-text); } .issue-title.warning { color: var(--amber-text); } .issue-title.ok { color: var(--green-text); }
   .issue-why { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
   .fix-box { background: var(--surface); border-radius: var(--radius); padding: 10px 14px; border-left: 3px solid; }
-  .fix-box.critical { border-color: var(--red); }
-  .fix-box.warning { border-color: var(--amber); }
-  .fix-box.ok { border-color: var(--green); }
+  .fix-box.critical { border-color: var(--red); } .fix-box.warning { border-color: var(--amber); } .fix-box.ok { border-color: var(--green); }
   .fix-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 3px; }
   .fix-text { font-size: 13px; color: var(--text); line-height: 1.5; font-weight: 500; }
   .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 28px; }
@@ -181,37 +157,39 @@
   .wf-num { width: 56px; font-size: 12px; font-weight: 600; color: var(--text); text-align: right; }
   .chart-section { margin-bottom: 28px; }
   .chart-wrap { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
-  .ask-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 0.5px solid var(--border); }
+  .weekly-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 28px; }
+  .week-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 12px; text-align: center; }
+  .week-label { font-size: 10px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px; }
+  .week-val { font-size: 16px; font-weight: 600; color: var(--text); }
+  .family-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+  .family-table th { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  .family-table td { font-size: 13px; padding: 10px; border-bottom: 0.5px solid var(--border); }
+  .family-table tr.current { background: var(--blue-bg); }
 
-  /* Empty state */
   .empty { text-align: center; padding: 80px 24px; }
   .empty-icon { width: 56px; height: 56px; background: var(--surface2); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
   .empty-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
   .empty-sub { font-size: 13px; color: var(--text3); margin-bottom: 24px; line-height: 1.6; }
-
-  /* Misc */
   .back-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text2); background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 20px; }
   .back-btn:hover { color: var(--text); }
-  .divider { height: 0.5px; background: var(--border); margin: 20px 0; }
-  .tag-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tag { font-size: 11px; padding: 3px 9px; border-radius: 20px; background: var(--surface2); color: var(--text2); border: 0.5px solid var(--border); }
+  .month-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+  .month-table th { font-size: 10px; color: var(--text3); text-transform: uppercase; padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--border); }
+  .month-table th:first-child { text-align: left; }
+  .month-table td { font-size: 13px; padding: 8px 10px; border-bottom: 0.5px solid var(--border); text-align: right; }
+  .month-table td:first-child { text-align: left; font-weight: 500; }
 </style>
 </head>
 <body>
 <div class="app">
-
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="logo-mark">
         <div class="logo-icon">
-          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 12L6 5L9 9L11 7L14 12H2Z" fill="white" opacity=".9"/>
-          </svg>
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 12L6 5L9 9L11 7L14 12H2Z" fill="white" opacity=".9"/></svg>
         </div>
         <div>
           <div class="logo-name">ASIN Lens</div>
-          <div class="logo-sub">Amazon ASIN Analyzer</div>
+          <div class="logo-sub">PPC Farm Analyzer</div>
         </div>
       </div>
     </div>
@@ -222,18 +200,15 @@
         <span class="nav-badge" id="crit-badge" style="display:none">0</span>
       </button>
       <button class="nav-item" id="nav-analyze" onclick="navigate('analyze')">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/></svg>
-        Analyze ASIN
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 13V3h12v10H2z"/><path d="M5 10V7M8 10V5M11 10V8"/></svg>
+        Import CSV
       </button>
     </nav>
     <div class="sidebar-footer">
-      <div class="api-key-label">Anthropic API Key</div>
-      <input class="api-key-input" type="password" id="apiKeyInput" placeholder="sk-ant-..." oninput="saveKey(this.value)">
-      <div style="font-size:10px;color:var(--text3);margin-top:5px;line-height:1.5">Key stored locally in your browser. Never sent anywhere except Anthropic.</div>
+      No API key needed. All analysis runs locally in your browser from PPC Farm CSV exports.
     </div>
   </aside>
 
-  <!-- Main -->
   <div class="main">
     <div class="topbar">
       <div>
@@ -241,7 +216,7 @@
         <div class="page-sub" id="page-sub">All your ASINs at a glance</div>
       </div>
       <div class="topbar-actions" id="topbar-actions">
-        <button class="btn primary" onclick="navigate('analyze')">+ Analyze new ASIN</button>
+        <button class="btn primary" onclick="navigate('analyze')">+ Import CSV</button>
       </div>
     </div>
     <div class="content" id="content"></div>
@@ -251,11 +226,8 @@
 <script>
 // --- State ---
 let currentView = 'dashboard';
-let pendingFiles = [];
-let currentDetailId = null;
+let pendingFile = null;
 
-function getKey() { return localStorage.getItem('asin_api_key') || ''; }
-function saveKey(v) { localStorage.setItem('asin_api_key', v); }
 function getASINs() { try { return JSON.parse(localStorage.getItem('asin_records') || '[]'); } catch { return []; } }
 function saveASINs(arr) { localStorage.setItem('asin_records', JSON.stringify(arr)); }
 function getASIN(id) { return getASINs().find(a => a.id === id); }
@@ -265,6 +237,353 @@ function upsertASIN(asin) {
   saveASINs(arr);
 }
 function deleteASIN(id) { saveASINs(getASINs().filter(a => a.id !== id)); }
+
+// --- CSV Parser (handles quoted fields with newlines/commas) ---
+function parseCSV(text) {
+  const rows = []; let row = []; let cell = ''; let inQuote = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuote) {
+      if (ch === '"' && text[i+1] === '"') { cell += '"'; i++; }
+      else if (ch === '"') { inQuote = false; }
+      else { cell += ch; }
+    } else {
+      if (ch === '"') { inQuote = true; }
+      else if (ch === ',') { row.push(cell); cell = ''; }
+      else if (ch === '\n' || (ch === '\r' && text[i+1] === '\n')) {
+        if (ch === '\r') i++;
+        row.push(cell); cell = ''; rows.push(row); row = [];
+      } else { cell += ch; }
+    }
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+// --- Extract data from PPC Farm vertical CSV ---
+function extractFromCSV(rows) {
+  if (rows.length < 5) throw new Error('CSV too short. Is this a PPC Farm SKU Viewer export?');
+
+  // Row 0 = section headers, Row 1 = ASIN + nav, Row 2+ = data
+  const asin = (rows[1] || [])[0] || '';
+  if (!asin.match(/^B0[A-Z0-9]{8,}/)) throw new Error('Could not find an ASIN in cell A2. Make sure this is a PPC Farm SKU Viewer CSV.');
+
+  // Get product name from the end of header row
+  const headerRow = rows[0] || [];
+  let productName = '';
+  for (let i = headerRow.length - 1; i >= 0; i--) {
+    if (headerRow[i] && headerRow[i].length > 20) { productName = headerRow[i]; break; }
+  }
+  if (!productName) productName = 'ASIN ' + asin;
+  if (productName.length > 80) productName = productName.substring(0, 77) + '...';
+
+  // Helper: find item/value in vertical layout
+  // Searches a column range for an item label and returns value from the next column
+  function findItemValue(itemCol, valCol, label, startRow, endRow) {
+    startRow = startRow || 3; endRow = endRow || Math.min(rows.length, 50);
+    for (let r = startRow; r < endRow; r++) {
+      const item = (rows[r] && rows[r][itemCol]) || '';
+      if (item.trim().toLowerCase() === label.toLowerCase()) {
+        return (rows[r][valCol] || '').trim();
+      }
+    }
+    return '';
+  }
+
+  // Find section column offsets by scanning header row for section names
+  function findSectionCol(sectionName) {
+    for (let c = 0; c < headerRow.length; c++) {
+      if (headerRow[c] && headerRow[c].trim().includes(sectionName)) return c;
+    }
+    return -1;
+  }
+
+  // Row 3 (index 2) has sub-headers with "Item" / "Value" labels
+  // We'll find them by searching for known column patterns
+  const subHeaders = rows[2] || [];
+
+  // Find Item/Value column pairs by scanning for "Item" in subheader row
+  function findItemValCols(nearCol) {
+    for (let c = Math.max(0, nearCol - 5); c < Math.min(subHeaders.length, nearCol + 10); c++) {
+      if (subHeaders[c] && subHeaders[c].trim() === 'Item') {
+        return { itemCol: c, valCol: c + 1 };
+      }
+    }
+    return { itemCol: nearCol, valCol: nearCol + 1 };
+  }
+
+  // Section 7: Margin
+  const sec7 = findSectionCol('7. Margin');
+  const margin = sec7 >= 0 ? findItemValCols(sec7) : { itemCol: 117, valCol: 118 };
+  const price = findItemValue(margin.itemCol, margin.valCol, 'Price') || findItemValue(margin.itemCol, margin.valCol, 'Sale Price');
+  const cogs = findItemValue(margin.itemCol, margin.valCol, 'COGS');
+  const fbaFee = findItemValue(margin.itemCol, margin.valCol, 'FBA Fee');
+  const refFee = findItemValue(margin.itemCol, margin.valCol, 'Referral Fee %');
+  const grossProfit = findItemValue(margin.itemCol, margin.valCol, 'Gross Profit');
+  const grossMargin = findItemValue(margin.itemCol, margin.valCol, 'Gross Profit Margin');
+  const targetAcos = findItemValue(margin.itemCol, margin.valCol, 'Final Target ACoS');
+
+  // Section 12: Inventory
+  const sec12 = findSectionCol('12. Inventory');
+  const inv = sec12 >= 0 ? findItemValCols(sec12) : { itemCol: 162, valCol: 163 };
+  const dsr = findItemValue(inv.itemCol, inv.valCol, 'DSR');
+  const totalInv = findItemValue(inv.itemCol, inv.valCol, 'Total Inventory');
+  const daysOfCover = findItemValue(inv.itemCol, inv.valCol, 'Days of Cover');
+
+  // Section 24: Overall Results
+  const sec24 = findSectionCol('24. Overall Results');
+  const ov = sec24 >= 0 ? findItemValCols(sec24) : { itemCol: 260, valCol: 261 };
+  const traffic = findItemValue(ov.itemCol, ov.valCol, '28 Day Traffic');
+  const convRate = findItemValue(ov.itemCol, ov.valCol, '28 Day Conversion Rate');
+  const units28d = findItemValue(ov.itemCol, ov.valCol, '28 Day Units');
+  const revenue = findItemValue(ov.itemCol, ov.valCol, '28 Day Revenue');
+  const ppcSpend = findItemValue(ov.itemCol, ov.valCol, '28 Day PPC Spend');
+  const grossProfit28d = findItemValue(ov.itemCol, ov.valCol, '28 Day Gross Profit');
+  const grossMargin28d = findItemValue(ov.itemCol, ov.valCol, '28 Day Gross Margin');
+  const tacos = findItemValue(ov.itemCol, ov.valCol, '28 Day TACOS');
+  const acos = findItemValue(ov.itemCol, ov.valCol, '28 Day ACoS');
+  const organicPct = findItemValue(ov.itemCol, ov.valCol, 'Organic Sales %');
+
+  // Weekly breakdowns (columns after value col: -4w, -3w, -2w, -1w)
+  function getWeekly(label) {
+    for (let r = 3; r < Math.min(rows.length, 50); r++) {
+      if ((rows[r][ov.itemCol] || '').trim() === label) {
+        return {
+          w4: (rows[r][ov.valCol + 1] || '').trim(),
+          w3: (rows[r][ov.valCol + 2] || '').trim(),
+          w2: (rows[r][ov.valCol + 3] || '').trim(),
+          w1: (rows[r][ov.valCol + 4] || '').trim()
+        };
+      }
+    }
+    return { w4: '', w3: '', w2: '', w1: '' };
+  }
+
+  const revenueWeekly = getWeekly('28 Day Revenue');
+  const spendWeekly = getWeekly('28 Day PPC Spend');
+  const profitWeekly = getWeekly('28 Day Gross Profit');
+  const trafficWeekly = getWeekly('28 Day Traffic');
+  const acosWeekly = getWeekly('28 Day ACoS');
+
+  // Section 25: PPC Results
+  const sec25 = findSectionCol('25. PPC Results');
+  const ppc = sec25 >= 0 ? findItemValCols(sec25) : { itemCol: 267, valCol: 268 };
+  const ppcImpressions = findItemValue(ppc.itemCol, ppc.valCol, '28 Day PPC Impressions');
+  const ppcClicks = findItemValue(ppc.itemCol, ppc.valCol, '28 Day PPC Clicks');
+  const ppcSales = findItemValue(ppc.itemCol, ppc.valCol, '28 Day PPC Sales');
+  const ppcCPC = findItemValue(ppc.itemCol, ppc.valCol, '28 Day PPC CPC');
+  const ppcCTR = findItemValue(ppc.itemCol, ppc.valCol, '28 Day PPC CTR');
+  const ppcCR = findItemValue(ppc.itemCol, ppc.valCol, '28 Day PPC CR');
+  const ppcAcos = findItemValue(ppc.itemCol, ppc.valCol, '28 Day PPC ACoS');
+  const acosDiff = findItemValue(ppc.itemCol, ppc.valCol, 'ACoS Difference');
+
+  // Section 26: Family
+  const sec26 = findSectionCol('26. Family Situation');
+  let family = [];
+  if (sec26 >= 0) {
+    // Family data: Raw ASINs col, then Pack Size, Active, Family Name, PPC Status, Price, GP, GPM, DSR, DOC, 28d GP, Price/Piece
+    // Scan for ASINs starting a few cols before sec26
+    for (let r = 3; r < Math.min(rows.length, 20); r++) {
+      for (let c = Math.max(0, sec26 - 10); c < sec26 + 5; c++) {
+        const val = (rows[r][c] || '').trim();
+        if (val.match(/^B0[A-Z0-9]{8,}/)) {
+          family.push({
+            asin: val,
+            ppcStatus: (rows[r][c + 2] || '').trim(),
+            price: (rows[r][c + 3] || '').trim(),
+            grossProfit: (rows[r][c + 4] || '').trim(),
+            margin: (rows[r][c + 5] || '').trim(),
+            dsr: (rows[r][c + 6] || '').trim(),
+            doc: (rows[r][c + 7] || '').trim(),
+            profit28d: (rows[r][c + 8] || '').trim(),
+          });
+          break;
+        }
+      }
+    }
+  }
+
+  // Section 40: Monthly results
+  const sec40 = findSectionCol('40. ASIN\'s Results by Month');
+  let monthlyData = [];
+  if (sec40 >= 0) {
+    // Look for months in the data rows - find the sorted month column
+    for (let r = 3; r < Math.min(rows.length, 30); r++) {
+      // Scan for month pattern near sec40
+      for (let c = sec40; c < Math.min(rows.length > 0 ? rows[0].length : sec40 + 20, sec40 + 20); c++) {
+        const v = (rows[r][c] || '').trim();
+        if (v.match(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i)) {
+          const rev = parseNum((rows[r][c + 1] || ''));
+          const gp = parseNum((rows[r][c + 2] || ''));
+          if (rev || gp) monthlyData.push({ month: v, revenue: rev, grossProfit: gp });
+          break;
+        }
+      }
+    }
+  }
+
+  // Compute max safe CPC
+  const priceNum = parseNum(price);
+  const marginPct = parseNum(grossMargin) / 100;
+  const crPct = parseNum(convRate) / 100;
+  const maxSafeCpc = (priceNum && marginPct && crPct) ? (priceNum * marginPct * crPct) : 0;
+
+  return {
+    id: asin,
+    asin: asin,
+    productName: productName,
+    analyzedAt: new Date().toISOString(),
+    metrics: {
+      price, cogs, fbaFee, referralFee: refFee,
+      grossProfit, grossMargin, breakEvenAcos: targetAcos || grossMargin,
+      acos, tacos, targetAcos,
+      maxSafeCpc: maxSafeCpc ? ('$' + maxSafeCpc.toFixed(2)) : '\u2014',
+      traffic, revenue, ppcSpend, ppcSales,
+      units: units28d, convRate,
+      grossProfit28d, grossMargin28d,
+      inventory: totalInv ? (totalInv + ' units') : '\u2014',
+      daysOfCover: daysOfCover ? (daysOfCover + ' days') : '\u2014',
+      dsr,
+      ppcImpressions, ppcClicks, ppcCPC, ppcCTR, ppcCR, ppcAcos, acosDiff,
+      organicPct,
+      revenueWeekly, spendWeekly, profitWeekly, trafficWeekly, acosWeekly,
+      monthlyData,
+      family
+    },
+    issues: generateIssues({
+      price: priceNum, grossProfit: parseNum(grossProfit), grossMargin: parseNum(grossMargin),
+      acos: parseNum(acos), targetAcos: parseNum(targetAcos || grossMargin),
+      tacos: parseNum(tacos), traffic: parseNum(traffic), convRate: parseNum(convRate),
+      daysOfCover: parseNum(daysOfCover), cpc: parseNum(ppcCPC), maxSafeCpc,
+      grossProfit28d: parseNum(grossProfit28d), revenue: parseNum(revenue),
+      ppcSpend: parseNum(ppcSpend), organicPct: parseNum(organicPct),
+      inventory: parseNum(totalInv), dsr: parseNum(dsr)
+    })
+  };
+}
+
+// --- Issue Generation (pure logic, no AI) ---
+function generateIssues(d) {
+  const issues = [];
+
+  // CRITICAL checks
+  if (d.grossProfit28d < 0) {
+    issues.push({
+      severity: 'critical',
+      title: 'Losing money over 28 days',
+      why: '28-day gross profit is $' + d.grossProfit28d.toFixed(0) + ' on $' + d.revenue.toFixed(0) + ' revenue. PPC spend of $' + d.ppcSpend.toFixed(0) + ' is eating into the $' + d.grossProfit.toFixed(2) + '/unit margin.',
+      fix: 'Reduce PPC spend immediately. Lower bids across all campaigns until ACoS drops below your ' + d.targetAcos.toFixed(0) + '% target. Consider pausing high-spend, low-conversion campaigns.'
+    });
+  }
+
+  if (d.acos > 0 && d.targetAcos > 0 && d.acos > d.targetAcos + 10) {
+    issues.push({
+      severity: 'critical',
+      title: 'ACoS ' + d.acos.toFixed(0) + '% far above ' + d.targetAcos.toFixed(0) + '% target',
+      why: 'Actual ACoS is ' + d.acos.toFixed(0) + '% but break-even is ' + d.targetAcos.toFixed(0) + '%. That\'s ' + (d.acos - d.targetAcos).toFixed(0) + ' points over \u2014 every PPC sale is losing money.',
+      fix: 'Lower max bids by 30-50%. Current CPC is $' + d.cpc.toFixed(2) + ' but max safe CPC at break-even is $' + d.maxSafeCpc.toFixed(2) + '. Cut bids to $' + Math.max(0.15, d.maxSafeCpc * 0.8).toFixed(2) + ' and negate losing search terms.'
+    });
+  } else if (d.acos > 0 && d.targetAcos > 0 && d.acos > d.targetAcos + 5) {
+    issues.push({
+      severity: 'warning',
+      title: 'ACoS ' + d.acos.toFixed(0) + '% above ' + d.targetAcos.toFixed(0) + '% target',
+      why: 'ACoS is ' + (d.acos - d.targetAcos).toFixed(0) + ' points above break-even. Not catastrophic yet, but PPC isn\'t profitable.',
+      fix: 'Gradually lower bids by 15-20%. Review search term report and negate terms with high spend and no conversions.'
+    });
+  }
+
+  if (d.tacos > 30) {
+    issues.push({
+      severity: 'critical',
+      title: 'TACOS at ' + d.tacos.toFixed(0) + '% \u2014 unsustainable',
+      why: 'Total advertising cost of sales is ' + d.tacos.toFixed(0) + '%. You\'re spending $' + d.ppcSpend.toFixed(0) + ' on ads to generate $' + d.revenue.toFixed(0) + ' total revenue. Healthy TACOS is under 15%.',
+      fix: 'Aggressively cut PPC spend. Focus budget only on converting keywords. Target TACOS under 15% by reducing spend to ~$' + Math.max(5, d.revenue * 0.15).toFixed(0) + '/28 days.'
+    });
+  } else if (d.tacos > 15) {
+    issues.push({
+      severity: 'warning',
+      title: 'TACOS at ' + d.tacos.toFixed(0) + '% \u2014 on the high side',
+      why: 'TACOS between 15-30% means ads are a large share of revenue. Ideally organic sales should carry more weight.',
+      fix: 'Improve organic ranking to reduce ad dependency. Optimize listing keywords and images to boost organic conversion.'
+    });
+  }
+
+  if (d.cpc > 0 && d.maxSafeCpc > 0 && d.cpc > d.maxSafeCpc * 2) {
+    issues.push({
+      severity: 'critical',
+      title: 'CPC $' + d.cpc.toFixed(2) + ' is ' + (d.cpc / d.maxSafeCpc).toFixed(1) + 'x max safe bid',
+      why: 'You\'re paying $' + d.cpc.toFixed(2) + ' per click but max safe CPC is $' + d.maxSafeCpc.toFixed(2) + ' (price \u00d7 margin \u00d7 conversion rate). Every click costs more than it can earn back.',
+      fix: 'Lower all max bids to $' + d.maxSafeCpc.toFixed(2) + ' or below. Consider exact match only to reduce wasted clicks at high CPCs.'
+    });
+  }
+
+  if (d.traffic > 0 && d.traffic < 50) {
+    issues.push({
+      severity: 'critical',
+      title: 'Very low traffic: ' + d.traffic + ' sessions in 28 days',
+      why: 'Only ' + d.traffic + ' sessions means less than 2/day. Not enough volume to generate consistent sales or reliable data for optimization.',
+      fix: 'Increase ad spend on converting campaigns to drive more traffic. Check if listing is indexed for key search terms. Consider lowering price temporarily to boost velocity.'
+    });
+  } else if (d.traffic > 0 && d.traffic < 150) {
+    issues.push({
+      severity: 'warning',
+      title: 'Low traffic: ' + d.traffic + ' sessions in 28 days',
+      why: 'About ' + Math.round(d.traffic / 28) + ' sessions/day. Enough for some sales but limits growth potential.',
+      fix: 'Expand keyword targeting. Add broad match campaigns for discovery. Optimize main image and title for higher CTR.'
+    });
+  }
+
+  if (d.convRate > 0 && d.convRate < 2) {
+    issues.push({
+      severity: 'critical',
+      title: 'Conversion rate only ' + d.convRate.toFixed(1) + '%',
+      why: 'Less than 2% conversion means 98 out of 100 visitors leave without buying. This makes every click extremely expensive.',
+      fix: 'Audit your listing: improve main image, bullet points, A+ content, and reviews. Check if price is competitive. Run a split test on the main image.'
+    });
+  } else if (d.convRate > 0 && d.convRate < 6) {
+    issues.push({
+      severity: 'warning',
+      title: 'Conversion rate at ' + d.convRate.toFixed(1) + '%',
+      why: 'Below average for most Amazon categories. Higher conversion = lower effective CPC and better organic ranking.',
+      fix: 'Improve listing quality. Add video, enhance A+ content, and work on getting more reviews. Aim for 8-15% conversion.'
+    });
+  }
+
+  if (d.daysOfCover > 0 && d.daysOfCover < 30) {
+    issues.push({
+      severity: 'critical',
+      title: 'Only ' + d.daysOfCover + ' days of inventory left',
+      why: 'At current sell rate you\'ll be out of stock in ' + d.daysOfCover + ' days. Stockouts kill organic ranking and take weeks to recover.',
+      fix: 'Reorder immediately. Consider raising price slightly to slow sales while inventory is in transit.'
+    });
+  } else if (d.daysOfCover > 0 && d.daysOfCover < 60) {
+    issues.push({
+      severity: 'warning',
+      title: d.daysOfCover + ' days of inventory \u2014 reorder soon',
+      why: 'Getting into reorder territory. Account for lead time and shipping delays.',
+      fix: 'Place a reorder now to maintain buffer. Keep at least 60-90 days of cover for healthy operations.'
+    });
+  }
+
+  // OK checks (strengths)
+  if (d.convRate >= 8) {
+    issues.push({ severity: 'ok', title: 'Strong conversion rate at ' + d.convRate.toFixed(1) + '%', why: 'Well above average. This means your listing is compelling and each click has a good chance of converting.', fix: 'Keep listing quality high. Monitor for any drops after competitor changes.' });
+  }
+  if (d.daysOfCover >= 90) {
+    issues.push({ severity: 'ok', title: 'Healthy inventory: ' + d.daysOfCover + ' days of cover', why: 'Well-stocked with ' + d.inventory + ' units and ' + d.daysOfCover + ' days of cover at current velocity.', fix: 'No action needed. Keep monitoring sell-through rate.' });
+  }
+  if (d.acos > 0 && d.acos <= d.targetAcos && d.targetAcos > 0) {
+    issues.push({ severity: 'ok', title: 'ACoS at ' + d.acos.toFixed(0) + '% \u2014 within target', why: 'Actual ACoS is at or below break-even ACoS of ' + d.targetAcos.toFixed(0) + '%. PPC is profitable.', fix: 'Consider gradually increasing bids to capture more volume while staying profitable.' });
+  }
+  if (d.organicPct >= 50) {
+    issues.push({ severity: 'ok', title: 'Good organic sales mix at ' + d.organicPct.toFixed(0) + '%', why: 'More than half of sales come from organic, reducing ad dependency.', fix: 'Maintain listing optimization to keep organic ranking strong.' });
+  }
+
+  // Sort: critical first, then warning, then ok
+  const order = { critical: 0, warning: 1, ok: 2 };
+  issues.sort((a, b) => order[a.severity] - order[b.severity]);
+  return issues;
+}
 
 // --- Navigation ---
 function navigate(view, param) {
@@ -289,16 +608,15 @@ function updateBadge() {
 function renderDashboard() {
   document.getElementById('page-title').textContent = 'Dashboard';
   document.getElementById('page-sub').textContent = 'All your ASINs at a glance';
-  document.getElementById('topbar-actions').innerHTML = '<button class="btn primary" onclick="navigate(\'analyze\')">+ Analyze new ASIN</button>';
+  document.getElementById('topbar-actions').innerHTML = '<button class="btn primary" onclick="navigate(\'analyze\')">+ Import CSV</button>';
   const asins = getASINs();
   const content = document.getElementById('content');
   if (!asins.length) {
     content.innerHTML = '<div class="empty">' +
       '<div class="empty-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="3" width="9" height="9" rx="2" fill="currentColor" opacity=".3"/><rect x="16" y="3" width="9" height="9" rx="2" fill="currentColor" opacity=".3"/><rect x="3" y="16" width="9" height="9" rx="2" fill="currentColor" opacity=".3"/><rect x="16" y="16" width="9" height="9" rx="2" fill="currentColor" opacity=".6"/></svg></div>' +
       '<div class="empty-title">No ASINs yet</div>' +
-      '<div class="empty-sub">Upload screenshots from your Amazon seller tool<br>and get an instant diagnosis for each ASIN.</div>' +
-      '<button class="btn primary" onclick="navigate(\'analyze\')">Analyze your first ASIN</button>' +
-      '</div>';
+      '<div class="empty-sub">Import a PPC Farm SKU Viewer CSV export<br>and get an instant diagnosis for each ASIN.</div>' +
+      '<button class="btn primary" onclick="navigate(\'analyze\')">Import your first CSV</button></div>';
     return;
   }
   const crit = asins.filter(a => getHealth(a.issues) === 'critical').length;
@@ -321,86 +639,109 @@ function renderDashboard() {
 function tileHTML(a) {
   const health = getHealth(a.issues);
   const topIssues = a.issues.slice(0,3);
-  const gp = parseNum(a.metrics?.grossProfit);
-  const gpColor = gp < 0 ? 'red' : gp < 3 ? 'amber' : 'green';
+  const gp28 = parseNum(a.metrics?.grossProfit28d);
+  const gpColor = gp28 < 0 ? 'red' : gp28 < 10 ? 'amber' : 'green';
   const ac = parseNum(a.metrics?.acos);
   const be = parseNum(a.metrics?.breakEvenAcos);
   const acColor = ac > be + 10 ? 'red' : ac > be ? 'amber' : 'green';
   return '<div class="asin-tile ' + health + '" onclick="navigate(\'detail\',\'' + a.id + '\')">' +
-    '<div class="tile-header"><div class="tile-top"><div><div class="tile-name">' + esc(a.productName) + '</div><div class="tile-asin">' + esc(a.asin || '\u2014') + '</div></div>' +
+    '<div class="tile-header"><div class="tile-top"><div><div class="tile-name">' + esc(a.productName) + '</div><div class="tile-asin">' + esc(a.asin) + '</div></div>' +
     '<span class="health-badge ' + health + '">' + (health === 'ok' ? 'Healthy' : health.charAt(0).toUpperCase()+health.slice(1)) + '</span></div></div>' +
     '<div class="tile-metrics">' +
-    '<div class="tile-metric"><div class="tm-label">Gross profit</div><div class="tm-val ' + gpColor + '">' + (a.metrics?.grossProfit || '\u2014') + '</div></div>' +
+    '<div class="tile-metric"><div class="tm-label">28d Profit</div><div class="tm-val ' + gpColor + '">' + (a.metrics?.grossProfit28d || '\u2014') + '</div></div>' +
     '<div class="tile-metric"><div class="tm-label">ACoS</div><div class="tm-val ' + acColor + '">' + (a.metrics?.acos || '\u2014') + '</div></div>' +
     '<div class="tile-metric"><div class="tm-label">TACOS</div><div class="tm-val ' + (parseNum(a.metrics?.tacos)>30?'red':parseNum(a.metrics?.tacos)>15?'amber':'green') + '">' + (a.metrics?.tacos || '\u2014') + '</div></div>' +
     '</div>' +
     '<div class="tile-issues">' + topIssues.map(i => '<div class="mini-issue"><div class="mini-dot ' + i.severity + '"></div><div class="mini-text">' + esc(i.title) + '</div></div>').join('') + '</div>' +
-    '<div class="tile-date">Last analyzed ' + timeAgo(a.analyzedAt) + '</div></div>';
+    '<div class="tile-date">Imported ' + timeAgo(a.analyzedAt) + '</div></div>';
 }
 
-// --- Analyze ---
+// --- Analyze (CSV Import) ---
 function renderAnalyze() {
-  pendingFiles = [];
-  document.getElementById('page-title').textContent = 'Analyze ASIN';
-  document.getElementById('page-sub').textContent = 'Drop screenshots from your seller tool';
+  pendingFile = null;
+  document.getElementById('page-title').textContent = 'Import CSV';
+  document.getElementById('page-sub').textContent = 'Upload a PPC Farm SKU Viewer export';
   document.getElementById('topbar-actions').innerHTML = '';
   document.getElementById('content').innerHTML =
-  '<div class="analyze-wrap">' +
-    '<div class="tip-box"><div class="tip-title">What to screenshot</div>' +
-    '<div class="tip-text">Any section works \u2014 Overall Results (section 24), PPC Results (section 25), Margin &amp; Bids, or Monthly Results. The more sections you include, the deeper the analysis. You can upload multiple screenshots for one ASIN.</div></div>' +
-    '<div class="drop-zone" id="dropZone" onclick="document.getElementById(\'fileIn\').click()" ondragover="doDrag(event,true)" ondragleave="doDrag(event,false)" ondrop="doDrop(event)" onpaste="handlePaste(event)">' +
-    '<input type="file" id="fileIn" accept="image/*" multiple onchange="addFiles(this.files)">' +
-    '<div class="drop-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="8" width="32" height="24" rx="3"/><path d="M14 20l4-5 4 5 3-3 5 7H10l4-4z"/><circle cx="26" cy="16" r="2" fill="currentColor" stroke="none"/></svg></div>' +
-    '<div class="drop-title">Drop screenshots here</div>' +
-    '<div class="drop-sub">or click to browse \u00b7 or just <strong>Ctrl+V</strong> to paste</div></div>' +
-    '<div class="preview-row" id="previewRow"></div>' +
+    '<div class="analyze-wrap">' +
+    '<div class="tip-box"><div class="tip-title">How to export from PPC Farm</div>' +
+    '<div class="tip-text">Open PPC Farm \u2192 Client Tool \u2192 SKU Viewer \u2192 Download as CSV. Each CSV file contains one ASIN. Import multiple files for multiple ASINs.</div></div>' +
+    '<div class="drop-zone" id="dropZone" onclick="document.getElementById(\'fileIn\').click()" ondragover="doDrag(event,true)" ondragleave="doDrag(event,false)" ondrop="doDrop(event)">' +
+    '<input type="file" id="fileIn" accept=".csv" multiple onchange="handleFiles(this.files)">' +
+    '<div class="drop-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="32" height="32" rx="3"/><path d="M13 20h14M20 13v14"/></svg></div>' +
+    '<div class="drop-title">Drop CSV files here</div>' +
+    '<div class="drop-sub">or click to browse \u2014 supports multiple files</div></div>' +
+    '<div id="fileList"></div>' +
     '<div class="analyze-footer">' +
-    '<button class="btn primary" id="analyzeBtn" onclick="runAnalysis()" disabled>Analyze screenshots</button>' +
-    '<div id="spinRow" style="display:none;align-items:center;gap:8px"><div class="spinner"></div><span class="status-txt" id="statusTxt"></span></div>' +
-    '</div>' +
-    '<div id="errBanner" class="error-banner" style="display:none"></div></div>';
+    '<button class="btn primary" id="importBtn" onclick="runImport()" disabled>Import &amp; Analyze</button>' +
+    '<div id="spinRow" style="display:none;align-items:center;gap:8px"><div class="spinner"></div><span class="status-txt" id="statusTxt"></span></div></div>' +
+    '<div id="resultBanner" style="display:none"></div></div>';
 }
 
-function handlePaste(e) {
-  const items = (e.clipboardData || e.originalEvent?.clipboardData)?.items;
-  if (!items) return;
-  for (const item of items) {
-    if (!item.type.startsWith('image/')) continue;
-    const file = item.getAsFile();
-    if (file) addFiles([file]);
-  }
-}
-
+let pendingFiles = [];
 function doDrag(e, on) { e.preventDefault(); document.getElementById('dropZone')?.classList.toggle('drag', on); }
-function doDrop(e) { e.preventDefault(); document.getElementById('dropZone')?.classList.remove('drag'); addFiles(e.dataTransfer.files); }
+function doDrop(e) { e.preventDefault(); document.getElementById('dropZone')?.classList.remove('drag'); handleFiles(e.dataTransfer.files); }
 
-function addFiles(fl) {
+function handleFiles(fl) {
   for (const f of fl) {
-    if (!f.type.startsWith('image/')) continue;
+    if (!f.name.endsWith('.csv')) continue;
     pendingFiles.push(f);
-    const idx = pendingFiles.length - 1;
-    const reader = new FileReader();
-    reader.onload = ev => addThumb(ev.target.result, f.name, idx);
-    reader.readAsDataURL(f);
   }
-  const btn = document.getElementById('analyzeBtn');
-  if (btn) btn.disabled = pendingFiles.filter(Boolean).length === 0;
+  renderFileList();
+  const btn = document.getElementById('importBtn');
+  if (btn) btn.disabled = pendingFiles.length === 0;
 }
 
-function addThumb(src, name, idx) {
-  const row = document.getElementById('previewRow');
-  if (!row) return;
-  const d = document.createElement('div');
-  d.className = 'preview-thumb'; d.id = 'thumb-'+idx;
-  d.innerHTML = '<img src="' + src + '"><button class="preview-remove" onclick="removeThumb(' + idx + ')">\u00d7</button><div class="preview-name">' + name.slice(0,16) + '</div>';
-  row.appendChild(d);
+function renderFileList() {
+  const el = document.getElementById('fileList');
+  if (!el) return;
+  el.innerHTML = pendingFiles.map((f, i) =>
+    '<div class="file-info"><div><div class="file-name">' + esc(f.name) + '</div><div class="file-size">' + (f.size / 1024).toFixed(0) + ' KB</div></div>' +
+    '<button class="file-remove" onclick="removeFile(' + i + ')">\u00d7</button></div>'
+  ).join('');
 }
 
-function removeThumb(idx) {
-  pendingFiles[idx] = null;
-  document.getElementById('thumb-'+idx)?.remove();
-  const btn = document.getElementById('analyzeBtn');
-  if (btn) btn.disabled = pendingFiles.filter(Boolean).length === 0;
+function removeFile(i) {
+  pendingFiles.splice(i, 1);
+  renderFileList();
+  const btn = document.getElementById('importBtn');
+  if (btn) btn.disabled = pendingFiles.length === 0;
+}
+
+async function runImport() {
+  const btn = document.getElementById('importBtn');
+  if (btn) btn.disabled = true;
+  document.getElementById('resultBanner').style.display = 'none';
+  setStatus('Parsing CSV files...', true);
+
+  let imported = 0, errors = [];
+  for (const f of pendingFiles) {
+    try {
+      const text = await f.text();
+      const rows = parseCSV(text);
+      const asin = extractFromCSV(rows);
+      upsertASIN(asin);
+      imported++;
+    } catch (e) {
+      errors.push(f.name + ': ' + e.message);
+    }
+  }
+
+  setStatus('', false);
+  const banner = document.getElementById('resultBanner');
+  if (imported > 0) {
+    banner.className = 'success-banner';
+    banner.textContent = 'Imported ' + imported + ' ASIN' + (imported > 1 ? 's' : '') + ' successfully.' + (errors.length ? ' ' + errors.length + ' file(s) failed.' : '');
+    banner.style.display = 'block';
+    updateBadge();
+    pendingFiles = [];
+    setTimeout(() => navigate('dashboard'), 1000);
+  } else {
+    banner.className = 'error-banner';
+    banner.textContent = 'Import failed: ' + errors.join('; ');
+    banner.style.display = 'block';
+    if (btn) btn.disabled = false;
+  }
 }
 
 function setStatus(msg, loading) {
@@ -409,146 +750,125 @@ function setStatus(msg, loading) {
   row.style.display = msg ? 'flex' : 'none';
   const txt = document.getElementById('statusTxt');
   if (txt) txt.textContent = msg;
-  const spin = row.querySelector('.spinner');
-  if (spin) spin.style.display = loading ? '' : 'none';
-}
-
-async function runAnalysis() {
-  const key = getKey() || document.getElementById('apiKeyInput')?.value;
-  if (!key) { showErr('Please enter your Anthropic API key in the sidebar first.'); return; }
-  const valid = pendingFiles.filter(Boolean);
-  if (!valid.length) return;
-  const btn = document.getElementById('analyzeBtn');
-  if (btn) btn.disabled = true;
-  document.getElementById('errBanner').style.display = 'none';
-  setStatus('Reading your screenshots\u2026', true);
-  try {
-    const imageContents = await Promise.all(valid.map(async f => {
-      const b64 = await toB64(f);
-      return { type:'image', source:{ type:'base64', media_type: f.type, data: b64 } };
-    }));
-    setStatus('Extracting data and running diagnosis\u2026', true);
-    const prompt = 'You are an expert Amazon seller consultant specializing in PPC profitability analysis. Analyze these screenshots from an Amazon seller management tool.\n\nExtract every ASIN visible and return a JSON array. For EACH ASIN return EXACTLY this structure:\n{\n  "asin": "BXXXXXXXXXX or empty string",\n  "productName": "concise product name",\n  "metrics": {\n    "price": "$X.XX or \u2014",\n    "cogs": "$X.XX or \u2014",\n    "fbaFee": "$X.XX or \u2014",\n    "referralFee": "$X.XX or X% or \u2014",\n    "grossProfit": "$X.XX (use negative sign if loss) or \u2014",\n    "grossMargin": "X% or \u2014",\n    "breakEvenAcos": "X% (this equals the gross margin %) or \u2014",\n    "acos": "X% or \u2014",\n    "acosVsTarget": "above|near|ok",\n    "tacos": "X% or \u2014",\n    "maxSafeCpc": "$X.XX (= price \u00d7 grossMargin% \u00d7 convRate%) or \u2014",\n    "traffic": "number or \u2014",\n    "revenue": "$X or \u2014",\n    "ppcSpend": "$X or \u2014",\n    "ppcSales": "$X or \u2014",\n    "units": "number or \u2014",\n    "convRate": "X% or \u2014",\n    "maxBid": "$X.XX or \u2014",\n    "inventory": "X units or \u2014",\n    "daysOfCover": "X days or \u2014",\n    "monthlyData": [{"month":"Apr 26","revenue":38,"grossProfit":-10}]\n  },\n  "issues": [\n    {\n      "severity": "critical|warning|ok",\n      "title": "Short plain-English problem title",\n      "why": "2-3 sentences explaining what this number means and WHY it is a problem. Use actual numbers from the screenshot.",\n      "fix": "Specific actionable fix with exact numbers. E.g. \'Lower max bid from $1.10 to $0.16\' not just \'lower bids\'."\n    }\n  ]\n}\n\nSeverity rules \u2014 be strict:\nCRITICAL: gross profit negative, ACoS > break-even by 10+ pts, TACOS > 30%, max bid > 2\u00d7 max safe CPC, traffic < 50 sessions, days of cover < 30, conversion rate < 2%\nWARNING: ACoS above break-even 5-10pts, TACOS 15-30%, conversion rate 2-6%, traffic 50-150, days of cover 30-60, high PPC spend % of revenue\nOK: only for genuine strengths (e.g. good CVR, healthy inventory, profitable campaign)\n\nSort issues: critical first, then warning, then ok. Include 2-6 issues total. Be specific and use the actual numbers you see.\n\nReturn ONLY valid JSON array. No markdown fences, no explanation text.';
-
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-opus-4-5', max_tokens: 2000, messages: [{ role:'user', content: [...imageContents, { type:'text', text: prompt }] }] })
-    });
-    const data = await resp.json();
-    if (data.error) throw new Error(data.error.message);
-    const text = data.content.map(c => c.text||'').join('').replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(text);
-    if (!parsed.length) throw new Error('No ASIN data found. Try including the Overall Results or Margin & Bids sections.');
-    for (const a of parsed) {
-      a.id = a.asin || ('asin_' + Date.now() + '_' + Math.random().toString(36).slice(2,6));
-      a.analyzedAt = new Date().toISOString();
-      upsertASIN(a);
-    }
-    setStatus('Done \u2014 ' + parsed.length + ' ASIN' + (parsed.length>1?'s':'') + ' saved.', false);
-    if (btn) btn.disabled = false;
-    pendingFiles = [];
-    updateBadge();
-    setTimeout(() => navigate('dashboard'), 800);
-  } catch(e) {
-    showErr(e.message);
-    setStatus('', false);
-    if (btn) btn.disabled = false;
-  }
-}
-
-function showErr(msg) {
-  const el = document.getElementById('errBanner');
-  if (el) { el.textContent = msg; el.style.display = 'block'; }
 }
 
 // --- Detail ---
 function renderDetail(id) {
-  currentDetailId = id;
   const a = getASIN(id);
   if (!a) { navigate('dashboard'); return; }
-  document.getElementById('page-title').textContent = a.productName || a.asin || 'ASIN Detail';
-  document.getElementById('page-sub').textContent = a.asin || '';
+  document.getElementById('page-title').textContent = a.productName || a.asin;
+  document.getElementById('page-sub').textContent = a.asin;
   document.getElementById('topbar-actions').innerHTML =
-    '<button class="btn" onclick="confirmDelete(\'' + id + '\')">Delete</button>' +
-    '<button class="btn primary" onclick="reAnalyze()">Re-analyze</button>';
+    '<button class="btn" onclick="if(confirm(\'Delete this ASIN?\')){ deleteASIN(\'' + id + '\'); updateBadge(); navigate(\'dashboard\'); }">Delete</button>';
+
   const health = getHealth(a.issues);
   const m = a.metrics || {};
   const gp = parseNum(m.grossProfit);
+  const gp28 = parseNum(m.grossProfit28d);
   const ac = parseNum(m.acos);
   const be = parseNum(m.breakEvenAcos);
   const tc = parseNum(m.tacos);
   const tr = parseNum(m.traffic);
-  const gpC = gp < 0 ? 'red' : gp < 3 ? 'amber' : 'green';
+  const gpC = gp28 < 0 ? 'red' : gp28 < 10 ? 'amber' : 'green';
   const acC = ac > be + 10 ? 'red' : ac > be ? 'amber' : 'green';
   const tcC = tc > 30 ? 'red' : tc > 15 ? 'amber' : 'green';
   const trC = tr < 50 ? 'red' : tr < 150 ? 'amber' : 'green';
 
   let html = '<div class="detail-wrap">' +
-    '<button class="back-btn" onclick="navigate(\'dashboard\')">' +
-    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>' +
-    'Back to dashboard</button>' +
-    '<div class="detail-header">' +
-    '<div class="health-circle ' + health + '">' + (health==='critical'?'!':health==='warning'?'~':'\u2713') + '</div>' +
+    '<button class="back-btn" onclick="navigate(\'dashboard\')"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg> Back to dashboard</button>' +
+    '<div class="detail-header"><div class="health-circle ' + health + '">' + (health==='critical'?'!':health==='warning'?'~':'\u2713') + '</div>' +
     '<div><div class="detail-name">' + esc(a.productName) + '</div>' +
-    '<div class="detail-meta">' + esc(a.asin||'ASIN unknown') + ' \u00b7 Analyzed ' + timeAgo(a.analyzedAt) + '</div></div></div>' +
-    '<div class="section-title">Key metrics</div>' +
-    '<div class="metrics-grid">' +
-    '<div class="metric-box"><div class="mb-label">Gross profit/unit</div><div class="mb-val ' + gpC + '">' + (m.grossProfit||'\u2014') + '</div><div class="mb-sub">after FBA + referral + COGS</div></div>' +
-    '<div class="metric-box"><div class="mb-label">Gross margin</div><div class="mb-val ' + gpC + '">' + (m.grossMargin||'\u2014') + '</div><div class="mb-sub">= break-even ACoS</div></div>' +
-    '<div class="metric-box"><div class="mb-label">Actual ACoS</div><div class="mb-val ' + acC + '">' + (m.acos||'\u2014') + '</div><div class="mb-sub">target: ' + (m.breakEvenAcos||'\u2014') + '</div></div>' +
-    '<div class="metric-box"><div class="mb-label">TACOS</div><div class="mb-val ' + tcC + '">' + (m.tacos||'\u2014') + '</div><div class="mb-sub">total ad cost of sales</div></div>' +
-    '<div class="metric-box"><div class="mb-label">Max safe CPC</div><div class="mb-val">' + (m.maxSafeCpc||'\u2014') + '</div><div class="mb-sub">at break-even ACoS</div></div>' +
-    '<div class="metric-box"><div class="mb-label">28d traffic</div><div class="mb-val ' + trC + '">' + (m.traffic||'\u2014') + '</div><div class="mb-sub">sessions</div></div>' +
-    '<div class="metric-box"><div class="mb-label">28d revenue</div><div class="mb-val">' + (m.revenue||'\u2014') + '</div><div class="mb-sub">' + (m.units||'\u2014') + ' units</div></div>' +
-    '<div class="metric-box"><div class="mb-label">Inventory</div><div class="mb-val">' + (m.inventory||'\u2014') + '</div><div class="mb-sub">' + (m.daysOfCover||'\u2014') + ' days cover</div></div>' +
+    '<div class="detail-meta">' + esc(a.asin) + ' \u00b7 Imported ' + timeAgo(a.analyzedAt) + '</div></div></div>';
+
+  // Key metrics
+  html += '<div class="section-title">Key Metrics</div><div class="metrics-grid">' +
+    metricBox('Price', m.price, '') +
+    metricBox('Gross profit/unit', m.grossProfit, '', gp < 0 ? 'red' : gp < 3 ? 'amber' : 'green') +
+    metricBox('Gross margin', m.grossMargin, '= break-even ACoS', gp < 0 ? 'red' : '') +
+    metricBox('28d ACoS', m.acos, 'target: ' + (m.targetAcos || m.grossMargin || '\u2014'), acC) +
+    metricBox('28d TACOS', m.tacos, 'ad cost / total sales', tcC) +
+    metricBox('28d Revenue', m.revenue, (m.units || '\u2014') + ' units') +
+    metricBox('28d Profit', m.grossProfit28d, '', gpC) +
+    metricBox('28d Traffic', m.traffic, 'sessions', trC) +
+    metricBox('Conv. Rate', m.convRate, '', parseNum(m.convRate) < 2 ? 'red' : parseNum(m.convRate) < 6 ? 'amber' : 'green') +
+    metricBox('Max safe CPC', m.maxSafeCpc, 'actual: ' + (m.ppcCPC || '\u2014')) +
+    metricBox('PPC CPC', m.ppcCPC, '') +
+    metricBox('PPC Spend', m.ppcSpend, '') +
+    metricBox('Inventory', m.inventory, m.daysOfCover + ' cover') +
+    metricBox('DSR', m.dsr, 'daily sell rate') +
+    metricBox('Organic %', m.organicPct, 'of total sales') +
+    metricBox('PPC CTR', m.ppcCTR, '') +
     '</div>';
 
+  // Unit economics waterfall
   if (m.price && m.grossProfit) {
-    const price = parseNum(m.price);
+    const priceN = parseNum(m.price);
     const fba = parseNum(m.fbaFee);
-    const ref = parseNum(m.referralFee) || (price * 0.15);
-    const cogs = parseNum(m.cogs);
-    const gpr = parseNum(m.grossProfit);
-    html += '<div class="section-title">Unit economics breakdown</div><div class="waterfall">' +
+    const ref = parseNum(m.referralFee) || (priceN * 0.15);
+    const cogsN = parseNum(m.cogs);
+    const gpN = parseNum(m.grossProfit);
+    html += '<div class="section-title">Unit Economics</div><div class="waterfall">' +
       wfRow('Sale price', 100, '#185FA5', '#B5D4F4', m.price) +
-      (fba ? wfRow('FBA fee', Math.abs(fba/price*100), '#888780', '#D3D1C7', '-'+m.fbaFee) : '') +
-      (ref ? wfRow('Referral fee', Math.abs(ref/price*100), '#888780', '#D3D1C7', '-$'+ref.toFixed(2)) : '') +
-      (cogs ? wfRow('COGS', Math.abs(cogs/price*100), '#888780', '#D3D1C7', '-'+m.cogs) : '') +
-      wfRow('Gross profit', Math.max(0, Math.abs(gpr/price*100)), gpr>=0?'#3B6D11':'#A32D2D', gpr>=0?'#C0DD97':'#F7C1C1', m.grossProfit) +
+      (fba ? wfRow('FBA fee', Math.abs(fba/priceN*100), '#888780', '#D3D1C7', '-' + m.fbaFee) : '') +
+      (ref ? wfRow('Referral fee', Math.abs(ref/priceN*100), '#888780', '#D3D1C7', '-$' + ref.toFixed(2)) : '') +
+      (cogsN ? wfRow('COGS', Math.abs(cogsN/priceN*100), '#888780', '#D3D1C7', '-' + m.cogs) : '') +
+      wfRow('Gross profit', Math.max(0, Math.abs(gpN/priceN*100)), gpN>=0?'#3B6D11':'#A32D2D', gpN>=0?'#C0DD97':'#F7C1C1', m.grossProfit) +
       '</div>';
   }
 
-  if (m.monthlyData && m.monthlyData.length > 1) {
-    html += '<div class="chart-section"><div class="section-title">Revenue &amp; gross profit trend</div>' +
-      '<div class="chart-wrap"><div style="position:relative;height:200px"><canvas id="trendChart"></canvas></div></div></div>';
+  // Weekly trend chart
+  if (m.revenueWeekly) {
+    const wk = m.revenueWeekly;
+    const pw = m.profitWeekly || {};
+    html += '<div class="section-title">4-Week Trend</div>' +
+      '<div class="chart-wrap"><div style="position:relative;height:200px"><canvas id="weeklyChart"></canvas></div></div><br>';
   }
 
-  html += '<div class="section-title">What\'s wrong &amp; how to fix it</div>' +
-    '<div class="issues-list">' + a.issues.map(i => issueCardHTML(i)).join('') + '</div>' +
-    '<div class="ask-row">' +
-    '<button class="btn" onclick="sendPrompt(\'Help me build a specific PPC bid reduction plan for ' + esc(a.productName) + ' (' + esc(a.asin||'this ASIN') + '). Gross profit is ' + (m.grossProfit||'low') + ' per unit and current ACoS is ' + (m.acos||'high') + '.\')">Get PPC plan \u2197</button>' +
-    '<button class="btn" onclick="sendPrompt(\'What are the best ways to improve organic ranking for ' + esc(a.productName) + ' on Amazon? Traffic is at ' + (m.traffic||'very low') + ' sessions in 28 days.\')">Improve ranking \u2197</button>' +
-    '<button class="btn" onclick="sendPrompt(\'How can I improve the gross margin for ' + esc(a.productName) + '? Currently at ' + (m.grossMargin||'very low margin') + ' \u2014 what levers do I have?\')">Improve margins \u2197</button>' +
-    '</div></div>';
+  // Family table
+  if (m.family && m.family.length > 1) {
+    html += '<div class="section-title">Product Family</div>' +
+      '<table class="family-table"><thead><tr><th>ASIN</th><th>Status</th><th>Price</th><th>GP/unit</th><th>Margin</th><th>DSR</th><th>DOC</th><th>28d Profit</th></tr></thead><tbody>';
+    for (const f of m.family) {
+      const isCurrent = f.asin === a.asin;
+      html += '<tr' + (isCurrent ? ' class="current"' : '') + '>' +
+        '<td style="font-family:monospace;font-size:12px">' + esc(f.asin) + '</td>' +
+        '<td>' + esc(f.ppcStatus) + '</td><td>' + esc(f.price) + '</td><td>' + esc(f.grossProfit) + '</td>' +
+        '<td>' + esc(f.margin) + '</td><td>' + esc(f.dsr) + '</td><td>' + esc(f.doc) + '</td>' +
+        '<td style="font-weight:600;color:' + (parseNum(f.profit28d) < 0 ? 'var(--red)' : 'var(--green)') + '">' + esc(f.profit28d) + '</td></tr>';
+    }
+    html += '</tbody></table>';
+  }
+
+  // Issues
+  html += '<div class="section-title">Diagnosis &amp; Action Items</div><div class="issues-list">' +
+    a.issues.map(i => issueCardHTML(i)).join('') + '</div></div>';
 
   document.getElementById('content').innerHTML = html;
 
-  if (m.monthlyData && m.monthlyData.length > 1) {
-    const labels = m.monthlyData.map(d => d.month);
-    const revData = m.monthlyData.map(d => d.revenue || 0);
-    const gpData = m.monthlyData.map(d => d.grossProfit || 0);
-    new Chart(document.getElementById('trendChart'), {
+  // Render weekly chart
+  if (m.revenueWeekly) {
+    const labels = ['-4 wk', '-3 wk', '-2 wk', '-1 wk'];
+    const rw = m.revenueWeekly;
+    const pw = m.profitWeekly || {};
+    const sw = m.spendWeekly || {};
+    new Chart(document.getElementById('weeklyChart'), {
       data: {
         labels,
         datasets: [
-          { type:'bar', label:'Revenue', data: revData, backgroundColor: '#185FA5', borderRadius: 3, order: 2 },
-          { type:'line', label:'Gross profit', data: gpData, borderColor: '#E24B4A', backgroundColor: 'transparent', tension: .3, pointRadius: 3, borderWidth: 2, order: 1 }
+          { type: 'bar', label: 'Revenue', data: [parseNum(rw.w4), parseNum(rw.w3), parseNum(rw.w2), parseNum(rw.w1)], backgroundColor: '#185FA5', borderRadius: 3, order: 2 },
+          { type: 'bar', label: 'PPC Spend', data: [parseNum(sw.w4), parseNum(sw.w3), parseNum(sw.w2), parseNum(sw.w1)], backgroundColor: '#EF9F27', borderRadius: 3, order: 2 },
+          { type: 'line', label: 'Gross Profit', data: [parseNum(pw.w4), parseNum(pw.w3), parseNum(pw.w2), parseNum(pw.w1)], borderColor: '#E24B4A', backgroundColor: 'transparent', tension: .3, pointRadius: 4, borderWidth: 2, order: 1 }
         ]
       },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { font:{size:11}, color:'#888780', autoSkip: false, maxRotation: 45 }, grid:{display:false} }, y: { ticks: { font:{size:11}, color:'#888780', callback: v => '$'+v }, grid:{color:'rgba(136,135,128,.12)'} } } }
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: {size: 11}, padding: 16 } } }, scales: { x: { ticks: { font:{size:11}, color:'#888780' }, grid:{display:false} }, y: { ticks: { font:{size:11}, color:'#888780', callback: v => '$'+v }, grid:{color:'rgba(136,135,128,.12)'} } } }
     });
   }
+}
+
+function metricBox(label, val, sub, color) {
+  return '<div class="metric-box"><div class="mb-label">' + label + '</div>' +
+    '<div class="mb-val ' + (color || '') + '">' + (val || '\u2014') + '</div>' +
+    (sub ? '<div class="mb-sub">' + sub + '</div>' : '') + '</div>';
 }
 
 function wfRow(label, pct, fill, textColor, val) {
@@ -558,79 +878,35 @@ function wfRow(label, pct, fill, textColor, val) {
 }
 
 function issueCardHTML(i) {
-  return '<div class="issue-card ' + i.severity + '">' +
-    '<div class="issue-header"><span class="sev-pill ' + i.severity + '">' + i.severity + '</span>' +
+  return '<div class="issue-card ' + i.severity + '"><div class="issue-header"><span class="sev-pill ' + i.severity + '">' + i.severity + '</span>' +
     '<span class="issue-title ' + i.severity + '">' + esc(i.title) + '</span></div>' +
     '<div class="issue-why">' + esc(i.why) + '</div>' +
-    '<div class="fix-box ' + i.severity + '"><div class="fix-label">Fix it</div>' +
-    '<div class="fix-text">' + esc(i.fix) + '</div></div></div>';
-}
-
-function confirmDelete(id) {
-  if (confirm('Delete this ASIN record?')) { deleteASIN(id); updateBadge(); navigate('dashboard'); }
-}
-
-function reAnalyze() {
-  navigate('analyze');
+    '<div class="fix-box ' + i.severity + '"><div class="fix-label">Fix it</div><div class="fix-text">' + esc(i.fix) + '</div></div></div>';
 }
 
 // --- Helpers ---
 function getHealth(issues) {
-  if (!issues) return 'ok';
+  if (!issues || !issues.length) return 'ok';
   if (issues.some(i => i.severity === 'critical')) return 'critical';
   if (issues.some(i => i.severity === 'warning')) return 'warning';
   return 'ok';
 }
-
 function parseNum(v) {
-  if (v === null || v === undefined || v === '\u2014') return 0;
-  return parseFloat(String(v).replace(/[$,%\s]/g, '')) || 0;
+  if (v === null || v === undefined || v === '' || v === '\u2014') return 0;
+  return parseFloat(String(v).replace(/[$,%\s,]/g, '')) || 0;
 }
-
-function avg(arr) {
-  const valid = arr.filter(Boolean);
-  return valid.length ? valid.reduce((a,b) => a+b, 0) / valid.length : 0;
-}
-
-function esc(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
+function avg(arr) { const v = arr.filter(Boolean); return v.length ? v.reduce((a,b) => a+b, 0) / v.length : 0; }
+function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function timeAgo(iso) {
   if (!iso) return 'just now';
-  const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
-  if (diff < 60) return 'just now';
-  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
-  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
-  return Math.floor(diff/86400) + 'd ago';
-}
-
-async function toB64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
+  const d = Math.floor((Date.now() - new Date(iso)) / 1000);
+  if (d < 60) return 'just now'; if (d < 3600) return Math.floor(d/60) + 'm ago';
+  if (d < 86400) return Math.floor(d/3600) + 'h ago'; return Math.floor(d/86400) + 'd ago';
 }
 
 // --- Boot ---
-const savedKey = localStorage.getItem('asin_api_key') || '';
-const keyInput = document.getElementById('apiKeyInput');
-if (keyInput && savedKey) keyInput.value = savedKey;
 navigate('dashboard');
 updateBadge();
-document.addEventListener('paste', function(e) {
-  const items = (e.clipboardData || e.originalEvent?.clipboardData)?.items;
-  const hasImage = items && Array.from(items).some(i => i.type.startsWith('image/'));
-  if (!hasImage) return;
-  if (currentView !== 'analyze') {
-    navigate('analyze');
-    setTimeout(() => handlePaste(e), 120);
-  } else {
-    handlePaste(e);
-  }
-});
 </script>
 </body>
 </html>
