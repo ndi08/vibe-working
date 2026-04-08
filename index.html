@@ -55,7 +55,7 @@
 
   .page-title { font-size: 16px; font-weight: 600; color: var(--text); }
   .page-sub { font-size: 12px; color: var(--text3); }
-  .topbar-actions { margin-left: auto; display: flex; gap: 8px; }
+  .topbar-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
   .btn { padding: 7px 14px; font-size: 13px; font-weight: 500; border-radius: var(--radius); cursor: pointer; border: 0.5px solid var(--border2); background: var(--surface); color: var(--text); transition: background .12s; }
   .btn:hover { background: var(--surface2); }
   .btn.primary { background: var(--text); color: var(--surface); border-color: var(--text); }
@@ -97,8 +97,8 @@
   .asin-tile.ok { border-left: 3px solid var(--green); }
   .tile-header { padding: 14px 16px 10px; }
   .tile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
-  .tile-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
-  .tile-asin { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: monospace; }
+  .tile-asin { font-size: 13px; font-weight: 700; color: var(--text); font-family: monospace; line-height: 1.3; }
+  .tile-name { font-size: 12px; color: var(--text2); margin-top: 2px; line-height: 1.3; }
   .health-badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; flex-shrink: 0; }
   .health-badge.critical { background: var(--red-bg); color: var(--red-text); }
   .health-badge.warning { background: var(--amber-bg); color: var(--amber-text); }
@@ -115,6 +115,28 @@
   .mini-dot.critical { background: var(--red); } .mini-dot.warning { background: var(--amber); } .mini-dot.ok { background: var(--green); }
   .mini-text { color: var(--text2); line-height: 1.4; }
   .tile-date { padding: 8px 14px; font-size: 11px; color: var(--text3); border-top: 0.5px solid var(--border); }
+
+  /* Layout toggle buttons */
+  .layout-toggle { display: flex; border: 0.5px solid var(--border2); border-radius: var(--radius); overflow: hidden; }
+  .layout-toggle button { padding: 5px 10px; background: var(--surface); border: none; cursor: pointer; color: var(--text3); display: flex; align-items: center; justify-content: center; transition: background .12s, color .12s; }
+  .layout-toggle button:first-child { border-right: 0.5px solid var(--border2); }
+  .layout-toggle button.active { background: var(--surface2); color: var(--text); }
+  .layout-toggle button:hover { background: var(--surface2); }
+  .layout-toggle button svg { width: 16px; height: 16px; }
+
+  /* List view */
+  .asin-list-table { width: 100%; border-collapse: collapse; }
+  .asin-list-table th { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; white-space: nowrap; }
+  .asin-list-table th:hover { color: var(--text); }
+  .asin-list-table th.sorted-asc::after { content: ' \u25B2'; font-size: 8px; }
+  .asin-list-table th.sorted-desc::after { content: ' \u25BC'; font-size: 8px; }
+  .asin-list-table td { font-size: 13px; padding: 10px 12px; border-bottom: 0.5px solid var(--border); }
+  .asin-list-table tr { cursor: pointer; transition: background .12s; }
+  .asin-list-table tr:hover { background: var(--surface2); }
+  .asin-list-table .col-asin { font-family: monospace; font-weight: 600; font-size: 12px; }
+  .asin-list-table .col-name { color: var(--text2); max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .asin-list-table .col-num { text-align: right; font-weight: 500; }
+  .asin-list-table th.col-num { text-align: right; }
 
   .analyze-wrap { max-width: 700px; }
   .drop-zone { border: 1.5px dashed var(--border2); border-radius: var(--radius-lg); padding: 40px 24px; text-align: center; cursor: pointer; transition: background .15s, border-color .15s; margin-bottom: 16px; }
@@ -157,9 +179,14 @@
   .health-circle.critical { background: var(--red-bg); color: var(--red-text); }
   .health-circle.warning { background: var(--amber-bg); color: var(--amber-text); }
   .health-circle.ok { background: var(--green-bg); color: var(--green-text); }
-  .detail-name { font-size: 20px; font-weight: 600; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
+  .detail-asin { font-size: 15px; font-weight: 700; color: var(--text); font-family: monospace; line-height: 1.2; margin-bottom: 2px; }
+  .detail-asin a { color: var(--blue); text-decoration: none; font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-weight: 500; margin-left: 8px; }
+  .detail-asin a:hover { text-decoration: underline; }
+  .detail-name { font-size: 14px; color: var(--text2); line-height: 1.3; margin-bottom: 4px; }
   .detail-meta { font-size: 13px; color: var(--text3); }
   .section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 12px; }
+  .section-subtitle { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 8px; margin-top: 16px; padding-bottom: 4px; border-bottom: 0.5px solid var(--border); }
+  .section-subtitle:first-child { margin-top: 0; }
   .issues-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
   .issue-card { border-radius: var(--radius-lg); padding: 14px 16px; }
   .issue-card.critical { background: var(--red-bg); border: 0.5px solid rgba(162,45,45,.2); }
@@ -191,28 +218,33 @@
   .add-note-input::placeholder { color: var(--text3); }
   .add-note-btn { padding: 4px 10px; font-size: 11px; font-weight: 600; border-radius: var(--radius); cursor: pointer; border: none; background: var(--blue); color: #fff; white-space: nowrap; }
   .add-note-btn:hover { opacity: .85; }
-  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 28px; }
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 12px; }
   .metric-box { background: var(--surface2); border-radius: var(--radius); padding: 12px 14px; }
   .mb-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
   .mb-val { font-size: 20px; font-weight: 600; color: var(--text); }
   .mb-val.red { color: var(--red); } .mb-val.amber { color: var(--amber); } .mb-val.green { color: var(--green); }
   .mb-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
-  .waterfall { margin-bottom: 28px; }
-  .wf-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-  .wf-label { width: 130px; font-size: 12px; color: var(--text2); flex-shrink: 0; }
-  .wf-track { flex: 1; background: var(--surface2); border-radius: 4px; height: 24px; overflow: hidden; }
-  .wf-fill { height: 100%; display: flex; align-items: center; padding-left: 8px; font-size: 11px; font-weight: 600; border-radius: 4px; }
-  .wf-num { width: 56px; font-size: 12px; font-weight: 600; color: var(--text); text-align: right; }
   .chart-section { margin-bottom: 28px; }
   .chart-wrap { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
   .weekly-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 28px; }
   .week-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 12px; text-align: center; }
   .week-label { font-size: 10px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px; }
   .week-val { font-size: 16px; font-weight: 600; color: var(--text); }
-  .family-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
-  .family-table th { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
-  .family-table td { font-size: 13px; padding: 10px; border-bottom: 0.5px solid var(--border); }
-  .family-table tr.current { background: var(--blue-bg); }
+
+  /* Campaign table */
+  .campaign-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; font-size: 12px; }
+  .campaign-table th { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .campaign-table th:first-child { text-align: left; }
+  .campaign-table td { padding: 6px 8px; border-bottom: 0.5px solid var(--border); text-align: right; }
+  .campaign-table td:first-child { text-align: left; font-weight: 500; }
+  .campaign-table td:nth-child(2) { text-align: left; }
+  .campaign-table tr.summary-row { font-weight: 700; background: var(--surface2); }
+  .campaign-table tr.amber-row td { background: var(--amber-bg); }
+
+  /* Price history table */
+  .price-history-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; font-size: 12px; }
+  .price-history-table th { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+  .price-history-table td { padding: 6px 8px; border-bottom: 0.5px solid var(--border); }
 
   .empty { text-align: center; padding: 80px 24px; }
   .empty-icon { width: 56px; height: 56px; background: var(--surface2); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
@@ -285,6 +317,14 @@
 // --- State ---
 let currentView = 'dashboard';
 let pendingFile = null;
+
+// Layout preference
+function getDashLayout() { return localStorage.getItem('dash_layout') || 'grid'; }
+function setDashLayout(mode) { localStorage.setItem('dash_layout', mode); }
+
+// List view sort state
+let listSortCol = 'asin';
+let listSortDir = 'asc';
 
 function getASINs() { try { return JSON.parse(localStorage.getItem('asin_records') || '[]'); } catch { return []; } }
 function saveASINs(arr) { localStorage.setItem('asin_records', JSON.stringify(arr)); }
@@ -418,7 +458,6 @@ function extractFromCSV(rows) {
   if (productName.length > 80) productName = productName.substring(0, 77) + '...';
 
   // Helper: find item/value in vertical layout
-  // Searches a column range for an item label and returns value from the next column
   function findItemValue(itemCol, valCol, label, startRow, endRow) {
     startRow = startRow || 3; endRow = endRow || Math.min(rows.length, 50);
     for (let r = startRow; r < endRow; r++) {
@@ -439,7 +478,6 @@ function extractFromCSV(rows) {
   }
 
   // Row 3 (index 2) has sub-headers with "Item" / "Value" labels
-  // We'll find them by searching for known column patterns
   const subHeaders = rows[2] || [];
 
   // Find Item/Value column pairs by scanning for "Item" in subheader row
@@ -463,12 +501,50 @@ function extractFromCSV(rows) {
   const grossMargin = findItemValue(margin.itemCol, margin.valCol, 'Gross Profit Margin');
   const targetAcos = findItemValue(margin.itemCol, margin.valCol, 'Final Target ACoS');
 
+  // Section 5: PPC Basics - PPC Status
+  const sec5 = findSectionCol('5. PPC Basics');
+  const ppcBasics = sec5 >= 0 ? findItemValCols(sec5) : { itemCol: 104, valCol: 105 };
+  const ppcStatus = findItemValue(ppcBasics.itemCol, ppcBasics.valCol, 'PPC Status');
+
   // Section 12: Inventory
   const sec12 = findSectionCol('12. Inventory');
   const inv = sec12 >= 0 ? findItemValCols(sec12) : { itemCol: 162, valCol: 163 };
   const dsr = findItemValue(inv.itemCol, inv.valCol, 'DSR');
   const totalInv = findItemValue(inv.itemCol, inv.valCol, 'Total Inventory');
   const daysOfCover = findItemValue(inv.itemCol, inv.valCol, 'Days of Cover');
+
+  // FBA/FBM from cell A3 (row 2, col 0) - parse "FBA: X | FBM: X" pattern
+  let fbaUnits = '';
+  let fbmUnits = '';
+  const a3Text = (rows[2] && rows[2][0]) || '';
+  const fbaMatch = a3Text.match(/FBA:\s*(\d+)/i);
+  const fbmMatch = a3Text.match(/FBM:\s*(\d+)/i);
+  if (fbaMatch) fbaUnits = fbaMatch[1];
+  if (fbmMatch) fbmUnits = fbmMatch[1];
+
+  // Aged/LTSF inventory - Section 12 area, scan for age classifications
+  let agedUnits = '';
+  if (sec12 >= 0) {
+    // Look for LTSF or aged inventory items in inventory section
+    const ltsf = findItemValue(inv.itemCol, inv.valCol, 'LTSF Units', 3, 50) ||
+                 findItemValue(inv.itemCol, inv.valCol, 'Aged Inventory', 3, 50) ||
+                 findItemValue(inv.itemCol, inv.valCol, 'Aged Units', 3, 50) ||
+                 findItemValue(inv.itemCol, inv.valCol, 'LTSF', 3, 50);
+    if (ltsf) agedUnits = ltsf;
+    // Also check further rows in inventory section for age breakdown
+    if (!agedUnits) {
+      for (let r = 17; r < Math.min(rows.length, 35); r++) {
+        for (let c = Math.max(0, sec12 - 3); c < sec12 + 10; c++) {
+          const cellVal = (rows[r] && rows[r][c]) || '';
+          if (cellVal.match(/aged|ltsf/i)) {
+            agedUnits = (rows[r][c + 1] || '').trim();
+            break;
+          }
+        }
+        if (agedUnits) break;
+      }
+    }
+  }
 
   // Section 24: Overall Results
   const sec24 = findSectionCol('24. Overall Results');
@@ -517,12 +593,137 @@ function extractFromCSV(rows) {
   const ppcAcos = findItemValue(ppc.itemCol, ppc.valCol, '28 Day PPC ACoS');
   const acosDiff = findItemValue(ppc.itemCol, ppc.valCol, 'ACoS Difference');
 
+  // Section 20: Farming data
+  const sec20 = findSectionCol('20.');
+  let daysSinceFarming = '';
+  let timesFarmed = '';
+  if (sec20 >= 0) {
+    const farm = findItemValCols(sec20);
+    daysSinceFarming = findItemValue(farm.itemCol, farm.valCol, 'Days Since Farming', 3, 50) ||
+                       findItemValue(farm.itemCol, farm.valCol, 'Days since farming', 3, 50) ||
+                       findItemValue(farm.itemCol, farm.valCol, 'Days Since Last Farm', 3, 50);
+    timesFarmed = findItemValue(farm.itemCol, farm.valCol, 'Times Farmed', 3, 50) ||
+                  findItemValue(farm.itemCol, farm.valCol, 'Times farmed', 3, 50);
+    // Also try scanning columns 212-213 directly if section search missed
+    if (!daysSinceFarming) {
+      for (let r = 3; r < Math.min(rows.length, 50); r++) {
+        for (let c = 210; c < 216; c++) {
+          const cellVal = (rows[r] && rows[r][c]) || '';
+          if (cellVal.toLowerCase().includes('days since farming') || cellVal.toLowerCase().includes('days since last farm')) {
+            daysSinceFarming = (rows[r][c + 1] || '').trim();
+            break;
+          }
+        }
+        if (daysSinceFarming) break;
+      }
+    }
+    if (!timesFarmed) {
+      for (let r = 3; r < Math.min(rows.length, 50); r++) {
+        for (let c = 210; c < 216; c++) {
+          const cellVal = (rows[r] && rows[r][c]) || '';
+          if (cellVal.toLowerCase().includes('times farmed')) {
+            timesFarmed = (rows[r][c + 1] || '').trim();
+            break;
+          }
+        }
+        if (timesFarmed) break;
+      }
+    }
+  } else {
+    // Fallback: scan cols 210-216 directly
+    for (let r = 3; r < Math.min(rows.length, 50); r++) {
+      for (let c = 210; c < 216; c++) {
+        const cellVal = (rows[r] && rows[r][c]) || '';
+        if (cellVal.toLowerCase().includes('days since farming') || cellVal.toLowerCase().includes('days since last farm')) {
+          daysSinceFarming = (rows[r][c + 1] || '').trim();
+        }
+        if (cellVal.toLowerCase().includes('times farmed')) {
+          timesFarmed = (rows[r][c + 1] || '').trim();
+        }
+      }
+    }
+  }
+
+  // Section 31: Campaigns
+  const sec31 = findSectionCol('31.');
+  let campaigns = [];
+  const campaignNames = ["Summary","","Exact","TOS Exact","ROS Exact","PP Exact","","PTA","TOS PTA","ROS PTA","PP PTA","","Broad","CTA","Full Auto","FA Close-Match","FA Complements","FA Loose-Match","FA Substitutes","","CA Auto","CA Close-Match","CA Complements","CA Loose-Match","CA Substitutes","","Micro Auto","Micro Close-Match","Micro Complements","Micro Loose-Match","Micro Substitutes"];
+  if (sec31 >= 0) {
+    // Find sub-header columns relative to section 31
+    // Row 2 sub-headers: col+0=Status, col+19=Targets, col+22=Clicks, col+24=Spend, col+26=Sales, col+28=Units, col+30=ACoS, col+8=Default Max Bid, col+10=Max Bid Override
+    const baseCol = sec31;
+    // Try to find a "Campaign" column near section 31
+    let campaignNameCol = -1;
+    for (let c = Math.max(0, baseCol - 10); c < baseCol + 5; c++) {
+      const hdr = (subHeaders[c] || '').trim().toLowerCase();
+      if (hdr === 'campaign' || hdr === 'campaign name') {
+        campaignNameCol = c;
+        break;
+      }
+    }
+
+    // Parse campaign rows (rows 3-33 roughly, i.e. row index 3 to ~33)
+    for (let ri = 0; ri < campaignNames.length && (ri + 3) < rows.length; ri++) {
+      const r = ri + 3; // data starts at row index 3
+      const row = rows[r] || [];
+      const name = campaignNameCol >= 0 ? (row[campaignNameCol] || '').trim() : campaignNames[ri];
+      if (!name) continue; // skip blank separator rows
+
+      const status = (row[baseCol] || '').trim();
+      const targets = (row[baseCol + 19] || '').trim();
+      const clicks = (row[baseCol + 22] || '').trim();
+      const spend = (row[baseCol + 24] || '').trim();
+      const sales = (row[baseCol + 26] || '').trim();
+      const units = (row[baseCol + 28] || '').trim();
+      const campAcos = (row[baseCol + 30] || '').trim();
+      const maxBid = (row[baseCol + 8] || '').trim();
+      const maxBidOverride = (row[baseCol + 10] || '').trim();
+
+      // Only add if there's some meaningful data
+      if (status || targets || clicks || spend || sales) {
+        campaigns.push({
+          name: name,
+          status: status,
+          targets: targets,
+          clicks: clicks,
+          spend: spend,
+          sales: sales,
+          units: units,
+          acos: campAcos,
+          maxBid: maxBid,
+          maxBidOverride: maxBidOverride,
+          isSummary: ri === 0
+        });
+      }
+    }
+  }
+
+  // Section 8: Price History
+  const sec8 = findSectionCol('8.');
+  let priceHistory = [];
+  if (sec8 >= 0) {
+    // Price history rows around cols 128-132
+    // Scan for date patterns in the rows near section 8
+    for (let r = 3; r < Math.min(rows.length, 50); r++) {
+      for (let c = Math.max(0, sec8 - 3); c < sec8 + 10; c++) {
+        const cellVal = (rows[r] && rows[r][c]) || '';
+        if (cellVal.match(/\d+\/\d+\/\d+/)) {
+          const date = cellVal.trim();
+          const changedBy = (rows[r][c + 1] || '').trim();
+          const newPrice = (rows[r][c + 2] || '').trim();
+          if (newPrice && parseNum(newPrice) > 0) {
+            priceHistory.push({ date, changedBy, newPrice });
+          }
+          break;
+        }
+      }
+    }
+  }
+
   // Section 26: Family
   const sec26 = findSectionCol('26. Family Situation');
   let family = [];
   if (sec26 >= 0) {
-    // Family data: Raw ASINs col, then Pack Size, Active, Family Name, PPC Status, Price, GP, GPM, DSR, DOC, 28d GP, Price/Piece
-    // Scan for ASINs starting a few cols before sec26
     for (let r = 3; r < Math.min(rows.length, 20); r++) {
       for (let c = Math.max(0, sec26 - 10); c < sec26 + 5; c++) {
         const val = (rows[r][c] || '').trim();
@@ -547,9 +748,7 @@ function extractFromCSV(rows) {
   const sec40 = findSectionCol('40. ASIN\'s Results by Month');
   let monthlyData = [];
   if (sec40 >= 0) {
-    // Look for months in the data rows - find the sorted month column
     for (let r = 3; r < Math.min(rows.length, 30); r++) {
-      // Scan for month pattern near sec40
       for (let c = sec40; c < Math.min(rows.length > 0 ? rows[0].length : sec40 + 20, sec40 + 20); c++) {
         const v = (rows[r][c] || '').trim();
         if (v.match(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i)) {
@@ -562,22 +761,16 @@ function extractFromCSV(rows) {
     }
   }
 
-  // Section 3: ASIN Review History (cols ~94-101)
-  // Col 94=Days Ago, 95=Date, 96=Name for section 2 header rows
-  // Col 97=Note text, 99=Days Ago, 100=Date, 101=Name for section 3
+  // Section 3: ASIN Review History
   const sec3 = findSectionCol('3. ASIN Review History');
   let reviewHistory = [];
   if (sec3 >= 0) {
-    // Find the date/name/note columns by scanning nearby
-    // Section 2 (Client Notes - ASIN) has dates in cols sec3-3, sec3-2, sec3-1
-    // Section 3 note text is in col sec3, dates in sec3+2, sec3+3, sec3+4
     let currentEntry = null;
     for (let r = 3; r < Math.min(rows.length, 500); r++) {
       const daysAgo = (rows[r][sec3 - 3] || '').trim();
       const date = (rows[r][sec3 - 2] || '').trim();
       const name = (rows[r][sec3 - 1] || '').trim();
       const noteText = (rows[r][sec3] || '').trim();
-      // A new entry starts when we have a date
       if (date && date.match(/\d+\/\d+\/\d+/)) {
         if (currentEntry && currentEntry.notes.length) reviewHistory.push(currentEntry);
         currentEntry = { date: date, name: name, daysAgo: daysAgo, notes: [] };
@@ -595,6 +788,23 @@ function extractFromCSV(rows) {
   const crPct = parseNum(convRate) / 100;
   const maxSafeCpc = (priceNum && marginPct && crPct) ? (priceNum * marginPct * crPct) : 0;
 
+  // Compute last price change days
+  let lastPriceChangeDate = '';
+  let lastPriceChangeDays = 999;
+  let lastPriceChangePrice = '';
+  if (priceHistory.length > 0) {
+    const last = priceHistory[0]; // most recent
+    lastPriceChangeDate = last.date;
+    lastPriceChangePrice = last.newPrice;
+    try {
+      const parts = last.date.split('/');
+      if (parts.length >= 3) {
+        const phDate = new Date(parts[2].length === 2 ? '20' + parts[2] : parts[2], parseInt(parts[0]) - 1, parseInt(parts[1]));
+        lastPriceChangeDays = Math.floor((Date.now() - phDate.getTime()) / 86400000);
+      }
+    } catch(e) {}
+  }
+
   return {
     id: asin,
     asin: asin,
@@ -611,8 +821,13 @@ function extractFromCSV(rows) {
       inventory: totalInv ? (totalInv + ' units') : '\u2014',
       daysOfCover: daysOfCover ? (daysOfCover + ' days') : '\u2014',
       dsr,
+      fbaUnits, fbmUnits, agedUnits,
+      ppcStatus,
       ppcImpressions, ppcClicks, ppcCPC, ppcCTR, ppcCR, ppcAcos, acosDiff,
       organicPct,
+      daysSinceFarming, timesFarmed,
+      campaigns, priceHistory,
+      lastPriceChangeDate, lastPriceChangeDays, lastPriceChangePrice,
       revenueWeekly, spendWeekly, profitWeekly, trafficWeekly, acosWeekly,
       monthlyData,
       family,
@@ -625,7 +840,11 @@ function extractFromCSV(rows) {
       daysOfCover: parseNum(daysOfCover), cpc: parseNum(ppcCPC), maxSafeCpc,
       grossProfit28d: parseNum(grossProfit28d), revenue: parseNum(revenue),
       ppcSpend: parseNum(ppcSpend), organicPct: parseNum(organicPct),
-      inventory: parseNum(totalInv), dsr: parseNum(dsr)
+      inventory: parseNum(totalInv), dsr: parseNum(dsr),
+      daysSinceFarming: parseNum(daysSinceFarming),
+      campaigns: campaigns,
+      lastPriceChangeDays: lastPriceChangeDays,
+      lastPriceChangePrice: lastPriceChangePrice
     })
   };
 }
@@ -633,6 +852,16 @@ function extractFromCSV(rows) {
 // --- Issue Generation (pure logic, no AI) ---
 function generateIssues(d) {
   const issues = [];
+
+  // Price change awareness - add early so it appears before other suggestions
+  if (d.lastPriceChangeDays < 14 && d.lastPriceChangePrice) {
+    issues.push({
+      severity: 'ok',
+      title: 'Price recently changed ' + d.lastPriceChangeDays + ' days ago',
+      why: 'Price was changed to ' + d.lastPriceChangePrice + ' just ' + d.lastPriceChangeDays + ' days ago. It typically takes 7-14 days for a price change to fully reflect in conversion rate, sales velocity, and PPC metrics.',
+      fix: 'Monitor performance before making further price adjustments. Wait at least 14 days after a price change to evaluate its impact on profitability and ranking.'
+    });
+  }
 
   // CRITICAL checks
   if (d.grossProfit28d < 0) {
@@ -733,6 +962,26 @@ function generateIssues(d) {
     });
   }
 
+  // Farming check: if daysSinceFarming > 180 AND campaigns have low targets
+  if (d.daysSinceFarming > 180 && d.campaigns && d.campaigns.length) {
+    const lowTargetCampaigns = d.campaigns.filter(c => !c.isSummary && c.name && parseNum(c.targets) > 0 && parseNum(c.targets) < 10);
+    const exactCamp = d.campaigns.find(c => c.name === 'Exact');
+    const ptaCamp = d.campaigns.find(c => c.name === 'PTA');
+    const exactTargets = exactCamp ? parseNum(exactCamp.targets) : 999;
+    const ptaTargets = ptaCamp ? parseNum(ptaCamp.targets) : 999;
+
+    if (exactTargets < 10 || ptaTargets < 10 || lowTargetCampaigns.length > 0) {
+      const lowNames = lowTargetCampaigns.slice(0, 3).map(c => c.name + ' (' + c.targets + ' targets)').join(', ');
+      const sev = d.daysSinceFarming > 365 ? 'critical' : 'warning';
+      issues.push({
+        severity: sev,
+        title: 'Consider farming \u2014 ' + Math.round(d.daysSinceFarming) + ' days since last farm',
+        why: 'It has been ' + Math.round(d.daysSinceFarming) + ' days since the last farming run.' + (lowNames ? ' Low-target campaigns: ' + lowNames + '.' : '') + ' Farming refreshes keyword targets and can unlock new converting search terms.',
+        fix: 'Run a farming cycle to discover new keyword targets. Focus on Exact and PTA campaigns which currently have limited targets.'
+      });
+    }
+  }
+
   // OK checks (strengths)
   if (d.convRate >= 8) {
     issues.push({ severity: 'ok', title: 'Strong conversion rate at ' + d.convRate.toFixed(1) + '%', why: 'Well above average. This means your listing is compelling and each click has a good chance of converting.', fix: 'Keep listing quality high. Monitor for any drops after competitor changes.' });
@@ -776,8 +1025,13 @@ function updateBadge() {
 function renderDashboard() {
   document.getElementById('page-title').textContent = 'Dashboard';
   document.getElementById('page-sub').textContent = 'All your ASINs at a glance';
+  const layout = getDashLayout();
   document.getElementById('topbar-actions').innerHTML =
     '<input class="search-input" id="dashSearch" type="text" placeholder="Search ASIN or product name..." oninput="filterDashboard(this.value)" value="' + (window._dashSearch || '') + '">' +
+    '<div class="layout-toggle">' +
+    '<button title="Grid view" onclick="setDashLayout(\'grid\');renderDashboard()" class="' + (layout === 'grid' ? 'active' : '') + '"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></button>' +
+    '<button title="List view" onclick="setDashLayout(\'list\');renderDashboard()" class="' + (layout === 'list' ? 'active' : '') + '"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="2" rx="0.5"/><rect x="1" y="7" width="14" height="2" rx="0.5"/><rect x="1" y="12" width="14" height="2" rx="0.5"/></svg></button>' +
+    '</div>' +
     '<button class="btn primary" onclick="navigate(\'analyze\')">+ Import CSV</button>';
   const asins = getASINs();
   const query = (window._dashSearch || '').toLowerCase();
@@ -807,6 +1061,8 @@ function renderDashboard() {
     '</div>';
   if (query && !filtered.length) {
     html += '<div style="text-align:center;padding:40px;color:var(--text3)">No ASINs matching "' + esc(query) + '"</div>';
+  } else if (layout === 'list') {
+    html += renderListView(filtered);
   } else {
     html += '<div class="asin-grid">';
     const sorted = [...filtered].sort((a,b) => { const r = {critical:0,warning:1,ok:2}; return r[getHealth(a.issues)] - r[getHealth(b.issues)]; });
@@ -814,6 +1070,68 @@ function renderDashboard() {
     html += '</div>';
   }
   content.innerHTML = html;
+}
+
+function renderListView(filtered) {
+  // Sort the list
+  const sorted = [...filtered].sort((a, b) => {
+    let va, vb;
+    switch (listSortCol) {
+      case 'asin': va = a.asin || ''; vb = b.asin || ''; break;
+      case 'status': va = a.metrics?.ppcStatus || ''; vb = b.metrics?.ppcStatus || ''; break;
+      case 'name': va = a.productName || ''; vb = b.productName || ''; break;
+      case 'profit': va = parseNum(a.metrics?.grossProfit28d); vb = parseNum(b.metrics?.grossProfit28d); break;
+      case 'revenue': va = parseNum(a.metrics?.revenue); vb = parseNum(b.metrics?.revenue); break;
+      case 'acos': va = parseNum(a.metrics?.acos); vb = parseNum(b.metrics?.acos); break;
+      case 'health': { const r = {critical:0,warning:1,ok:2}; va = r[getHealth(a.issues)]; vb = r[getHealth(b.issues)]; break; }
+      default: va = a.asin; vb = b.asin;
+    }
+    if (typeof va === 'string') {
+      const cmp = va.localeCompare(vb);
+      return listSortDir === 'asc' ? cmp : -cmp;
+    }
+    return listSortDir === 'asc' ? va - vb : vb - va;
+  });
+
+  const sortClass = (col) => listSortCol === col ? ('sorted-' + listSortDir) : '';
+  let html = '<table class="asin-list-table"><thead><tr>' +
+    '<th class="' + sortClass('asin') + '" onclick="sortListBy(\'asin\')">ASIN</th>' +
+    '<th class="' + sortClass('status') + '" onclick="sortListBy(\'status\')">Status</th>' +
+    '<th class="' + sortClass('name') + '" onclick="sortListBy(\'name\')">Product Name</th>' +
+    '<th class="col-num ' + sortClass('profit') + '" onclick="sortListBy(\'profit\')">28D Profit</th>' +
+    '<th class="col-num ' + sortClass('revenue') + '" onclick="sortListBy(\'revenue\')">28D Revenue</th>' +
+    '<th class="col-num ' + sortClass('acos') + '" onclick="sortListBy(\'acos\')">28D ACoS</th>' +
+    '<th class="' + sortClass('health') + '" onclick="sortListBy(\'health\')">Health</th>' +
+    '</tr></thead><tbody>';
+  for (const a of sorted) {
+    const health = getHealth(a.issues);
+    const gp28 = parseNum(a.metrics?.grossProfit28d);
+    const gpColor = gp28 < 0 ? 'red' : gp28 < 10 ? 'amber' : 'green';
+    const ac = parseNum(a.metrics?.acos);
+    const be = parseNum(a.metrics?.breakEvenAcos);
+    const acColor = ac > be + 10 ? 'red' : ac > be ? 'amber' : 'green';
+    html += '<tr onclick="navigate(\'detail\',\'' + a.id + '\')">' +
+      '<td class="col-asin">' + esc(a.asin) + '</td>' +
+      '<td><span style="font-size:11px;padding:2px 7px;border-radius:8px;background:var(--surface2);color:var(--text2)">' + esc(a.metrics?.ppcStatus || '\u2014') + '</span></td>' +
+      '<td class="col-name">' + esc(a.productName) + '</td>' +
+      '<td class="col-num"><span style="color:var(--' + gpColor + ')">' + (a.metrics?.grossProfit28d || '\u2014') + '</span></td>' +
+      '<td class="col-num">' + (a.metrics?.revenue || '\u2014') + '</td>' +
+      '<td class="col-num"><span style="color:var(--' + acColor + ')">' + (a.metrics?.acos || '\u2014') + '</span></td>' +
+      '<td><span class="health-badge ' + health + '">' + (health === 'ok' ? 'Healthy' : health.charAt(0).toUpperCase()+health.slice(1)) + '</span></td>' +
+      '</tr>';
+  }
+  html += '</tbody></table>';
+  return html;
+}
+
+function sortListBy(col) {
+  if (listSortCol === col) {
+    listSortDir = listSortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    listSortCol = col;
+    listSortDir = 'asc';
+  }
+  renderDashboard();
 }
 
 function filterDashboard(val) {
@@ -825,19 +1143,20 @@ function filterDashboard(val) {
 
 function tileHTML(a) {
   const health = getHealth(a.issues);
-  const topIssues = a.issues.slice(0,3);
+  // Filter out TACOS issues from mini preview dots
+  const topIssues = a.issues.filter(i => !i.title.includes('TACOS')).slice(0,3);
   const gp28 = parseNum(a.metrics?.grossProfit28d);
   const gpColor = gp28 < 0 ? 'red' : gp28 < 10 ? 'amber' : 'green';
   const ac = parseNum(a.metrics?.acos);
   const be = parseNum(a.metrics?.breakEvenAcos);
   const acColor = ac > be + 10 ? 'red' : ac > be ? 'amber' : 'green';
   return '<div class="asin-tile ' + health + '" onclick="navigate(\'detail\',\'' + a.id + '\')">' +
-    '<div class="tile-header"><div class="tile-top"><div><div class="tile-name">' + esc(a.productName) + '</div><div class="tile-asin">' + esc(a.asin) + '</div></div>' +
+    '<div class="tile-header"><div class="tile-top"><div><div class="tile-asin">' + esc(a.asin) + (a.metrics?.ppcStatus ? ' <span style="font-family:inherit;font-size:10px;padding:1px 6px;border-radius:8px;background:var(--surface2);color:var(--text2);font-weight:500">' + esc(a.metrics.ppcStatus) + '</span>' : '') + '</div><div class="tile-name">' + esc(a.productName) + '</div></div>' +
     '<span class="health-badge ' + health + '">' + (health === 'ok' ? 'Healthy' : health.charAt(0).toUpperCase()+health.slice(1)) + '</span></div></div>' +
     '<div class="tile-metrics">' +
     '<div class="tile-metric"><div class="tm-label">28d Profit</div><div class="tm-val ' + gpColor + '">' + (a.metrics?.grossProfit28d || '\u2014') + '</div></div>' +
-    '<div class="tile-metric"><div class="tm-label">ACoS</div><div class="tm-val ' + acColor + '">' + (a.metrics?.acos || '\u2014') + '</div></div>' +
-    '<div class="tile-metric"><div class="tm-label">TACOS</div><div class="tm-val ' + (parseNum(a.metrics?.tacos)>30?'red':parseNum(a.metrics?.tacos)>15?'amber':'green') + '">' + (a.metrics?.tacos || '\u2014') + '</div></div>' +
+    '<div class="tile-metric"><div class="tm-label">28d Revenue</div><div class="tm-val">' + (a.metrics?.revenue || '\u2014') + '</div></div>' +
+    '<div class="tile-metric"><div class="tm-label">28d ACoS</div><div class="tm-val ' + acColor + '">' + (a.metrics?.acos || '\u2014') + '</div></div>' +
     '</div>' +
     '<div class="tile-issues">' + topIssues.map(i => '<div class="mini-issue"><div class="mini-dot ' + i.severity + '"></div><div class="mini-text">' + esc(i.title) + '</div></div>').join('') + '</div>' +
     '<div class="tile-date">Imported ' + timeAgo(a.analyzedAt) + '</div></div>';
@@ -943,8 +1262,8 @@ function setStatus(msg, loading) {
 function renderDetail(id) {
   const a = getASIN(id);
   if (!a) { navigate('dashboard'); return; }
-  document.getElementById('page-title').textContent = a.productName || a.asin;
-  document.getElementById('page-sub').textContent = a.asin;
+  document.getElementById('page-title').textContent = a.asin;
+  document.getElementById('page-sub').textContent = a.productName || '';
   document.getElementById('topbar-actions').innerHTML =
     '<button class="btn" onclick="if(confirm(\'Delete this ASIN?\')){ deleteASIN(\'' + id + '\'); updateBadge(); navigate(\'dashboard\'); }">Delete</button>';
 
@@ -963,8 +1282,9 @@ function renderDetail(id) {
 
   let html = '<button class="back-btn" onclick="navigate(\'dashboard\')"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg> Back to dashboard</button>' +
     '<div class="detail-header"><div class="health-circle ' + health + '">' + (health==='critical'?'!':health==='warning'?'~':'\u2713') + '</div>' +
-    '<div><div class="detail-name">' + esc(a.productName) + '</div>' +
-    '<div class="detail-meta">' + esc(a.asin) + ' \u00b7 Imported ' + timeAgo(a.analyzedAt) + '</div></div></div>' +
+    '<div><div class="detail-asin">' + esc(a.asin) + ' <a href="https://www.amazon.com/dp/' + esc(a.asin) + '" target="_blank" rel="noopener">View on Amazon \u2197</a></div>' +
+    '<div class="detail-name">' + esc(a.productName) + '</div>' +
+    '<div class="detail-meta">' + (m.ppcStatus ? '<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:' + (m.ppcStatus==='Farming'?'var(--green-bg)':m.ppcStatus==='Maintenance'?'var(--blue-bg)':'var(--amber-bg)') + ';color:' + (m.ppcStatus==='Farming'?'var(--green-text)':m.ppcStatus==='Maintenance'?'var(--blue-text)':'var(--amber-text)') + '">' + esc(m.ppcStatus) + '</span> \u00b7 ' : '') + 'Imported ' + timeAgo(a.analyzedAt) + '</div></div></div>' +
     '<div class="detail-wrap"><div class="detail-left">';
 
   // Changes since last import
@@ -979,40 +1299,76 @@ function renderDetail(id) {
     html += '</div></div>';
   }
 
-  // Key metrics
-  html += '<div class="section-title">Key Metrics</div><div class="metrics-grid">' +
-    metricBox('Price', m.price, '') +
-    metricBox('Gross profit/unit', m.grossProfit, '', gp < 0 ? 'red' : gp < 3 ? 'amber' : 'green') +
-    metricBox('Gross margin', m.grossMargin, '= break-even ACoS', gp < 0 ? 'red' : '') +
-    metricBox('28d ACoS', m.acos, 'target: ' + (m.targetAcos || m.grossMargin || '\u2014'), acC) +
-    metricBox('28d TACOS', m.tacos, 'ad cost / total sales', tcC) +
-    metricBox('28d Revenue', m.revenue, (m.units || '\u2014') + ' units') +
+  // ---- GROUPED METRICS ----
+  html += '<div class="section-title">Key Metrics</div>';
+
+  // Sales Performance
+  html += '<div class="section-subtitle">Sales Performance</div><div class="metrics-grid">' +
     metricBox('28d Profit', m.grossProfit28d, '', gpC) +
-    metricBox('28d Traffic', m.traffic, 'sessions', trC) +
-    metricBox('Conv. Rate', m.convRate, '', parseNum(m.convRate) < 2 ? 'red' : parseNum(m.convRate) < 6 ? 'amber' : 'green') +
-    metricBox('Max safe CPC', m.maxSafeCpc, 'actual: ' + (m.ppcCPC || '\u2014')) +
-    metricBox('PPC CPC', m.ppcCPC, '') +
-    metricBox('PPC Spend', m.ppcSpend, '') +
-    metricBox('Inventory', m.inventory, m.daysOfCover + ' cover') +
-    metricBox('DSR', m.dsr, 'daily sell rate') +
-    metricBox('Organic %', m.organicPct, 'of total sales') +
-    metricBox('PPC CTR', m.ppcCTR, '') +
+    metricBox('28d Units', m.units, '') +
+    metricBox('28d Revenue', m.revenue, '') +
     '</div>';
 
-  // Unit economics waterfall
-  if (m.price && m.grossProfit) {
-    const priceN = parseNum(m.price);
-    const fba = parseNum(m.fbaFee);
-    const ref = parseNum(m.referralFee) || (priceN * 0.15);
-    const cogsN = parseNum(m.cogs);
-    const gpN = parseNum(m.grossProfit);
-    html += '<div class="section-title">Unit Economics</div><div class="waterfall">' +
-      wfRow('Sale price', 100, '#185FA5', '#B5D4F4', m.price) +
-      (fba ? wfRow('FBA fee', Math.abs(fba/priceN*100), '#888780', '#D3D1C7', '-' + m.fbaFee) : '') +
-      (ref ? wfRow('Referral fee', Math.abs(ref/priceN*100), '#888780', '#D3D1C7', '-$' + ref.toFixed(2)) : '') +
-      (cogsN ? wfRow('COGS', Math.abs(cogsN/priceN*100), '#888780', '#D3D1C7', '-' + m.cogs) : '') +
-      wfRow('Gross profit', Math.max(0, Math.abs(gpN/priceN*100)), gpN>=0?'#3B6D11':'#A32D2D', gpN>=0?'#C0DD97':'#F7C1C1', m.grossProfit) +
-      '</div>';
+  // PPC Performance
+  html += '<div class="section-subtitle">PPC Performance</div><div class="metrics-grid">' +
+    metricBox('PPC Spend', m.ppcSpend, '') +
+    metricBox('PPC Sales', m.ppcSales, '') +
+    metricBox('Organic %', m.organicPct, 'of total sales') +
+    metricBox('PPC CTR', m.ppcCTR, '') +
+    metricBox('28d Traffic', m.traffic, 'sessions', trC) +
+    metricBox('Conv. Rate', m.convRate, '', parseNum(m.convRate) < 2 ? 'red' : parseNum(m.convRate) < 6 ? 'amber' : 'green') +
+    '</div>';
+
+  // Pricing
+  html += '<div class="section-subtitle">Pricing</div><div class="metrics-grid">' +
+    metricBox('Price', m.price, '') +
+    metricBox('GP/unit', m.grossProfit, '', gp < 0 ? 'red' : gp < 3 ? 'amber' : 'green') +
+    metricBox('GP Margin', m.grossMargin, '= break-even ACoS', gp < 0 ? 'red' : '') +
+    '</div>';
+
+  // Inventory
+  html += '<div class="section-subtitle">Inventory</div><div class="metrics-grid">' +
+    metricBox('FBA Units', m.fbaUnits || '\u2014', '') +
+    metricBox('FBM Units', m.fbmUnits || '\u2014', '') +
+    metricBox('Aged/LTSF', m.agedUnits || '\u2014', '') +
+    metricBox('DSR', m.dsr, 'daily sell rate') +
+    metricBox('Days of Cover', m.daysOfCover, '') +
+    '</div>';
+
+  // PPC Campaigns section
+  if (m.campaigns && m.campaigns.length) {
+    html += '<div class="section-title">PPC Campaigns</div>' +
+      '<table class="campaign-table"><thead><tr>' +
+      '<th style="text-align:left">Campaign</th><th style="text-align:left">Status</th>' +
+      '<th>Targets</th><th>Clicks</th><th>Spend</th><th>Sales</th><th>Units</th><th>ACoS</th><th>Max Bid</th>' +
+      '</tr></thead><tbody>';
+    for (const camp of m.campaigns) {
+      const tgts = parseNum(camp.targets);
+      const isLowTargets = tgts > 0 && tgts < 10 && !camp.isSummary;
+      const rowClass = camp.isSummary ? ' class="summary-row"' : (isLowTargets ? ' class="amber-row"' : '');
+      html += '<tr' + rowClass + '>' +
+        '<td>' + esc(camp.name) + '</td>' +
+        '<td>' + esc(camp.status) + '</td>' +
+        '<td style="text-align:right">' + esc(camp.targets) + '</td>' +
+        '<td style="text-align:right">' + esc(camp.clicks) + '</td>' +
+        '<td style="text-align:right">' + esc(camp.spend) + '</td>' +
+        '<td style="text-align:right">' + esc(camp.sales) + '</td>' +
+        '<td style="text-align:right">' + esc(camp.units) + '</td>' +
+        '<td style="text-align:right">' + esc(camp.acos) + '</td>' +
+        '<td style="text-align:right">' + esc(camp.maxBid || camp.maxBidOverride || '\u2014') + '</td>' +
+        '</tr>';
+    }
+    html += '</tbody></table>';
+  }
+
+  // Price History section
+  if (m.priceHistory && m.priceHistory.length) {
+    html += '<div class="section-title">Price History</div>' +
+      '<table class="price-history-table"><thead><tr><th>Date</th><th>Changed By</th><th>New Price</th></tr></thead><tbody>';
+    for (const ph of m.priceHistory) {
+      html += '<tr><td>' + esc(ph.date) + '</td><td>' + esc(ph.changedBy) + '</td><td style="font-weight:600">' + esc(ph.newPrice) + '</td></tr>';
+    }
+    html += '</tbody></table>';
   }
 
   // Weekly trend chart
@@ -1021,21 +1377,6 @@ function renderDetail(id) {
     const pw = m.profitWeekly || {};
     html += '<div class="section-title">4-Week Trend</div>' +
       '<div class="chart-wrap"><div style="position:relative;height:200px"><canvas id="weeklyChart"></canvas></div></div><br>';
-  }
-
-  // Family table
-  if (m.family && m.family.length > 1) {
-    html += '<div class="section-title">Product Family</div>' +
-      '<table class="family-table"><thead><tr><th>ASIN</th><th>Status</th><th>Price</th><th>GP/unit</th><th>Margin</th><th>DSR</th><th>DOC</th><th>28d Profit</th></tr></thead><tbody>';
-    for (const f of m.family) {
-      const isCurrent = f.asin === a.asin;
-      html += '<tr' + (isCurrent ? ' class="current"' : '') + '>' +
-        '<td style="font-family:monospace;font-size:12px">' + esc(f.asin) + '</td>' +
-        '<td>' + esc(f.ppcStatus) + '</td><td>' + esc(f.price) + '</td><td>' + esc(f.grossProfit) + '</td>' +
-        '<td>' + esc(f.margin) + '</td><td>' + esc(f.dsr) + '</td><td>' + esc(f.doc) + '</td>' +
-        '<td style="font-weight:600;color:' + (parseNum(f.profit28d) < 0 ? 'var(--red)' : 'var(--green)') + '">' + esc(f.profit28d) + '</td></tr>';
-    }
-    html += '</tbody></table>';
   }
 
   // Import History table
@@ -1134,12 +1475,6 @@ function metricBox(label, val, sub, color) {
   return '<div class="metric-box"><div class="mb-label">' + label + '</div>' +
     '<div class="mb-val ' + (color || '') + '">' + (val || '\u2014') + '</div>' +
     (sub ? '<div class="mb-sub">' + sub + '</div>' : '') + '</div>';
-}
-
-function wfRow(label, pct, fill, textColor, val) {
-  return '<div class="wf-row"><div class="wf-label">' + label + '</div>' +
-    '<div class="wf-track"><div class="wf-fill" style="width:' + Math.min(100,pct) + '%;background:' + fill + ';color:' + textColor + '"></div></div>' +
-    '<div class="wf-num">' + val + '</div></div>';
 }
 
 function issueCardHTML(i, asinId, issueIdx) {
