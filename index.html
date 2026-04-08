@@ -64,6 +64,23 @@
   .search-input { padding: 7px 12px; font-size: 13px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--surface2); color: var(--text); width: 240px; font-family: inherit; }
   .search-input:focus { outline: none; border-color: var(--blue); background: var(--surface); }
   .search-input::placeholder { color: var(--text3); }
+  .changes-bar { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 20px; }
+  .changes-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--text3); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .changes-title svg { width: 14px; height: 14px; }
+  .changes-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .change-chip { display: flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: var(--radius); font-size: 12px; background: var(--surface2); }
+  .change-label { color: var(--text3); }
+  .change-old { color: var(--text3); text-decoration: line-through; }
+  .change-arrow { color: var(--text3); font-size: 10px; }
+  .change-new { font-weight: 600; }
+  .change-new.up { color: var(--green); }
+  .change-new.down { color: var(--red); }
+  .history-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+  .history-table th { font-size: 10px; color: var(--text3); text-transform: uppercase; padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--border); }
+  .history-table th:first-child { text-align: left; }
+  .history-table td { font-size: 12px; padding: 6px 8px; border-bottom: 0.5px solid var(--border); text-align: right; }
+  .history-table td:first-child { text-align: left; color: var(--text3); }
+  .history-table tr:first-child td { font-weight: 600; background: var(--blue-bg); }
 
   .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
   .stat-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
@@ -273,9 +290,57 @@ function getASINs() { try { return JSON.parse(localStorage.getItem('asin_records
 function saveASINs(arr) { localStorage.setItem('asin_records', JSON.stringify(arr)); }
 function getASIN(id) { return getASINs().find(a => a.id === id); }
 function upsertASIN(asin) {
-  const arr = getASINs().filter(a => a.id !== asin.id);
-  arr.unshift(asin);
-  saveASINs(arr);
+  const arr = getASINs();
+  const existing = arr.find(a => a.id === asin.id);
+  if (existing) {
+    // Save snapshot of previous metrics to history
+    const history = existing.history || [];
+    history.unshift({
+      date: existing.analyzedAt,
+      metrics: JSON.parse(JSON.stringify(existing.metrics)),
+      issueCount: { critical: (existing.issues||[]).filter(i=>i.severity==='critical').length, warning: (existing.issues||[]).filter(i=>i.severity==='warning').length }
+    });
+    // Keep last 20 snapshots
+    if (history.length > 20) history.length = 20;
+    asin.history = history;
+    // Compute changes vs previous
+    asin.changes = computeChanges(existing.metrics, asin.metrics);
+  }
+  const filtered = arr.filter(a => a.id !== asin.id);
+  filtered.unshift(asin);
+  saveASINs(filtered);
+}
+
+function computeChanges(oldM, newM) {
+  const track = [
+    { key: 'acos', label: 'ACoS', fmt: 'pct' },
+    { key: 'tacos', label: 'TACOS', fmt: 'pct' },
+    { key: 'grossProfit28d', label: '28d Profit', fmt: 'dollar' },
+    { key: 'revenue', label: '28d Revenue', fmt: 'dollar' },
+    { key: 'ppcSpend', label: 'PPC Spend', fmt: 'dollar' },
+    { key: 'traffic', label: 'Traffic', fmt: 'num' },
+    { key: 'convRate', label: 'Conv. Rate', fmt: 'pct' },
+    { key: 'grossProfit', label: 'GP/unit', fmt: 'dollar' },
+    { key: 'price', label: 'Price', fmt: 'dollar' },
+  ];
+  const changes = [];
+  for (const t of track) {
+    const oldVal = parseNum(oldM[t.key]);
+    const newVal = parseNum(newM[t.key]);
+    if (oldVal === 0 && newVal === 0) continue;
+    if (oldVal === newVal) continue;
+    const diff = newVal - oldVal;
+    // For ACoS/TACOS/Spend, down is good. For revenue/profit/traffic/conv, up is good.
+    const lowerIsBetter = ['acos', 'tacos', 'ppcSpend'].includes(t.key);
+    const improved = lowerIsBetter ? diff < 0 : diff > 0;
+    changes.push({
+      label: t.label,
+      oldVal: oldM[t.key] || String(oldVal),
+      newVal: newM[t.key] || String(newVal),
+      diff, improved, fmt: t.fmt
+    });
+  }
+  return changes;
 }
 function deleteASIN(id) {
   saveASINs(getASINs().filter(a => a.id !== id));
@@ -902,6 +967,18 @@ function renderDetail(id) {
     '<div class="detail-meta">' + esc(a.asin) + ' \u00b7 Imported ' + timeAgo(a.analyzedAt) + '</div></div></div>' +
     '<div class="detail-wrap"><div class="detail-left">';
 
+  // Changes since last import
+  if (a.changes && a.changes.length) {
+    html += '<div class="changes-bar"><div class="changes-title"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M5 6l3-3 3 3M5 10l3 3 3-3"/></svg> Changes since last import</div><div class="changes-grid">';
+    for (const c of a.changes) {
+      html += '<div class="change-chip"><span class="change-label">' + c.label + '</span>' +
+        '<span class="change-old">' + esc(c.oldVal) + '</span>' +
+        '<span class="change-arrow">\u2192</span>' +
+        '<span class="change-new ' + (c.improved ? 'up' : 'down') + '">' + esc(c.newVal) + '</span></div>';
+    }
+    html += '</div></div>';
+  }
+
   // Key metrics
   html += '<div class="section-title">Key Metrics</div><div class="metrics-grid">' +
     metricBox('Price', m.price, '') +
@@ -957,6 +1034,26 @@ function renderDetail(id) {
         '<td>' + esc(f.ppcStatus) + '</td><td>' + esc(f.price) + '</td><td>' + esc(f.grossProfit) + '</td>' +
         '<td>' + esc(f.margin) + '</td><td>' + esc(f.dsr) + '</td><td>' + esc(f.doc) + '</td>' +
         '<td style="font-weight:600;color:' + (parseNum(f.profit28d) < 0 ? 'var(--red)' : 'var(--green)') + '">' + esc(f.profit28d) + '</td></tr>';
+    }
+    html += '</tbody></table>';
+  }
+
+  // Import History table
+  if (a.history && a.history.length) {
+    html += '<div class="section-title">Import History (' + a.history.length + ' previous)</div>' +
+      '<table class="history-table"><thead><tr><th>Date</th><th>Revenue</th><th>Profit</th><th>ACoS</th><th>TACOS</th><th>Traffic</th><th>Conv.</th><th>Issues</th></tr></thead><tbody>' +
+      '<tr><td>Current</td>' +
+      '<td>' + (m.revenue || '\u2014') + '</td><td>' + (m.grossProfit28d || '\u2014') + '</td>' +
+      '<td>' + (m.acos || '\u2014') + '</td><td>' + (m.tacos || '\u2014') + '</td>' +
+      '<td>' + (m.traffic || '\u2014') + '</td><td>' + (m.convRate || '\u2014') + '</td>' +
+      '<td>' + a.issues.filter(i=>i.severity==='critical').length + 'C / ' + a.issues.filter(i=>i.severity==='warning').length + 'W</td></tr>';
+    for (const h of a.history) {
+      const hm = h.metrics || {};
+      html += '<tr><td>' + formatNoteDate(h.date) + '</td>' +
+        '<td>' + (hm.revenue || '\u2014') + '</td><td>' + (hm.grossProfit28d || '\u2014') + '</td>' +
+        '<td>' + (hm.acos || '\u2014') + '</td><td>' + (hm.tacos || '\u2014') + '</td>' +
+        '<td>' + (hm.traffic || '\u2014') + '</td><td>' + (hm.convRate || '\u2014') + '</td>' +
+        '<td>' + (h.issueCount?.critical||0) + 'C / ' + (h.issueCount?.warning||0) + 'W</td></tr>';
     }
     html += '</tbody></table>';
   }
