@@ -61,6 +61,9 @@
   .btn.primary { background: var(--text); color: var(--surface); border-color: var(--text); }
   .btn.primary:hover { opacity: .85; }
   .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .search-input { padding: 7px 12px; font-size: 13px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--surface2); color: var(--text); width: 240px; font-family: inherit; }
+  .search-input:focus { outline: none; border-color: var(--blue); background: var(--surface); }
+  .search-input::placeholder { color: var(--text3); }
 
   .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
   .stat-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
@@ -708,8 +711,15 @@ function updateBadge() {
 function renderDashboard() {
   document.getElementById('page-title').textContent = 'Dashboard';
   document.getElementById('page-sub').textContent = 'All your ASINs at a glance';
-  document.getElementById('topbar-actions').innerHTML = '<button class="btn primary" onclick="navigate(\'analyze\')">+ Import CSV</button>';
+  document.getElementById('topbar-actions').innerHTML =
+    '<input class="search-input" id="dashSearch" type="text" placeholder="Search ASIN or product name..." oninput="filterDashboard(this.value)" value="' + (window._dashSearch || '') + '">' +
+    '<button class="btn primary" onclick="navigate(\'analyze\')">+ Import CSV</button>';
   const asins = getASINs();
+  const query = (window._dashSearch || '').toLowerCase();
+  const filtered = query ? asins.filter(a =>
+    (a.asin || '').toLowerCase().includes(query) ||
+    (a.productName || '').toLowerCase().includes(query)
+  ) : asins;
   const content = document.getElementById('content');
   if (!asins.length) {
     content.innerHTML = '<div class="empty">' +
@@ -719,21 +729,33 @@ function renderDashboard() {
       '<button class="btn primary" onclick="navigate(\'analyze\')">Import your first CSV</button></div>';
     return;
   }
-  const crit = asins.filter(a => getHealth(a.issues) === 'critical').length;
-  const warn = asins.filter(a => getHealth(a.issues) === 'warning').length;
-  const ok = asins.filter(a => getHealth(a.issues) === 'ok').length;
-  const avgAcos = avg(asins.map(a => parseNum(a.metrics?.acos)));
+  const crit = filtered.filter(a => getHealth(a.issues) === 'critical').length;
+  const warn = filtered.filter(a => getHealth(a.issues) === 'warning').length;
+  const ok = filtered.filter(a => getHealth(a.issues) === 'ok').length;
+  const avgAcos = avg(filtered.map(a => parseNum(a.metrics?.acos)));
   let html = '<div class="stat-grid">' +
     '<div class="stat-card"><div class="stat-label">Total ASINs</div><div class="stat-val">' + asins.length + '</div><div class="stat-sub">tracked</div></div>' +
     '<div class="stat-card"><div class="stat-label">Critical</div><div class="stat-val ' + (crit ? 'red' : '') + '">' + crit + '</div><div class="stat-sub">need urgent action</div></div>' +
     '<div class="stat-card"><div class="stat-label">Need attention</div><div class="stat-val ' + (warn ? 'amber' : '') + '">' + warn + '</div><div class="stat-sub">warnings found</div></div>' +
     '<div class="stat-card"><div class="stat-label">Healthy</div><div class="stat-val ' + (ok ? 'green' : '') + '">' + ok + '</div><div class="stat-sub">on track</div></div>' +
     (avgAcos ? '<div class="stat-card"><div class="stat-label">Avg ACoS</div><div class="stat-val ' + (avgAcos > 30 ? 'red' : avgAcos > 15 ? 'amber' : 'green') + '">' + avgAcos.toFixed(0) + '%</div><div class="stat-sub">across all ASINs</div></div>' : '') +
-    '</div><div class="asin-grid">';
-  const sorted = [...asins].sort((a,b) => { const r = {critical:0,warning:1,ok:2}; return r[getHealth(a.issues)] - r[getHealth(b.issues)]; });
-  for (const a of sorted) html += tileHTML(a);
-  html += '</div>';
+    '</div>';
+  if (query && !filtered.length) {
+    html += '<div style="text-align:center;padding:40px;color:var(--text3)">No ASINs matching "' + esc(query) + '"</div>';
+  } else {
+    html += '<div class="asin-grid">';
+    const sorted = [...filtered].sort((a,b) => { const r = {critical:0,warning:1,ok:2}; return r[getHealth(a.issues)] - r[getHealth(b.issues)]; });
+    for (const a of sorted) html += tileHTML(a);
+    html += '</div>';
+  }
   content.innerHTML = html;
+}
+
+function filterDashboard(val) {
+  window._dashSearch = val;
+  renderDashboard();
+  const input = document.getElementById('dashSearch');
+  if (input) { input.focus(); input.selectionStart = input.selectionEnd = val.length; }
 }
 
 function tileHTML(a) {
