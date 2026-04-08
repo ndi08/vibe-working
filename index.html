@@ -157,6 +157,20 @@
   .fix-box.critical { border-color: var(--red); } .fix-box.warning { border-color: var(--amber); } .fix-box.ok { border-color: var(--green); }
   .fix-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 3px; }
   .fix-text { font-size: 13px; color: var(--text); line-height: 1.5; font-weight: 500; }
+  .action-notes { margin-top: 8px; }
+  .action-note { display: flex; gap: 8px; padding: 6px 0; border-bottom: 0.5px solid var(--border); font-size: 12px; }
+  .action-note:last-child { border-bottom: none; }
+  .action-note-date { color: var(--text3); white-space: nowrap; flex-shrink: 0; }
+  .action-note-text { color: var(--text); line-height: 1.4; }
+  .action-note-del { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 14px; padding: 0 2px; flex-shrink: 0; opacity: 0; transition: opacity .15s; }
+  .action-note:hover .action-note-del { opacity: 1; }
+  .action-note-del:hover { color: var(--red); }
+  .add-note-row { display: flex; gap: 6px; margin-top: 6px; }
+  .add-note-input { flex: 1; font-size: 12px; padding: 5px 8px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--surface); color: var(--text); font-family: inherit; }
+  .add-note-input:focus { outline: none; border-color: var(--blue); }
+  .add-note-input::placeholder { color: var(--text3); }
+  .add-note-btn { padding: 4px 10px; font-size: 11px; font-weight: 600; border-radius: var(--radius); cursor: pointer; border: none; background: var(--blue); color: #fff; white-space: nowrap; }
+  .add-note-btn:hover { opacity: .85; }
   .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 28px; }
   .metric-box { background: var(--surface2); border-radius: var(--radius); padding: 12px 14px; }
   .mb-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
@@ -260,7 +274,41 @@ function upsertASIN(asin) {
   arr.unshift(asin);
   saveASINs(arr);
 }
-function deleteASIN(id) { saveASINs(getASINs().filter(a => a.id !== id)); }
+function deleteASIN(id) {
+  saveASINs(getASINs().filter(a => a.id !== id));
+  localStorage.removeItem('action_notes_' + id);
+}
+
+// --- Action Notes per issue ---
+function getActionNotes(asinId) {
+  try { return JSON.parse(localStorage.getItem('action_notes_' + asinId) || '{}'); } catch { return {}; }
+}
+function saveActionNotes(asinId, notes) {
+  localStorage.setItem('action_notes_' + asinId, JSON.stringify(notes));
+}
+function issueKey(issue) {
+  return (issue.severity + '_' + issue.title).replace(/[^a-zA-Z0-9]/g, '_').substring(0, 60);
+}
+function addActionNote(asinId, issueIdx, text) {
+  if (!text.trim()) return;
+  const a = getASIN(asinId);
+  if (!a || !a.issues[issueIdx]) return;
+  const key = issueKey(a.issues[issueIdx]);
+  const notes = getActionNotes(asinId);
+  if (!notes[key]) notes[key] = [];
+  notes[key].push({ text: text.trim(), date: new Date().toISOString() });
+  saveActionNotes(asinId, notes);
+  renderDetail(asinId);
+}
+function deleteActionNote(asinId, issueIdx, noteIdx) {
+  const a = getASIN(asinId);
+  if (!a || !a.issues[issueIdx]) return;
+  const key = issueKey(a.issues[issueIdx]);
+  const notes = getActionNotes(asinId);
+  if (notes[key]) { notes[key].splice(noteIdx, 1); if (!notes[key].length) delete notes[key]; }
+  saveActionNotes(asinId, notes);
+  renderDetail(asinId);
+}
 
 // --- CSV Parser (handles quoted fields with newlines/commas) ---
 function parseCSV(text) {
@@ -914,7 +962,7 @@ function renderDetail(id) {
   html += '</div><div class="resize-handle" id="resizeHandle"></div>' +
     '<div class="detail-right" id="detailRight" style="width:' + savedWidth + '">' +
     '<div class="section-title">Diagnosis &amp; Action Items</div><div class="issues-list">' +
-    a.issues.map(i => issueCardHTML(i)).join('') + '</div></div></div>';
+    a.issues.map((i, idx) => issueCardHTML(i, a.id, idx)).join('') + '</div></div></div>';
 
   document.getElementById('content').innerHTML = html;
 
@@ -975,11 +1023,40 @@ function wfRow(label, pct, fill, textColor, val) {
     '<div class="wf-num">' + val + '</div></div>';
 }
 
-function issueCardHTML(i) {
-  return '<div class="issue-card ' + i.severity + '"><div class="issue-header"><span class="sev-pill ' + i.severity + '">' + i.severity + '</span>' +
+function issueCardHTML(i, asinId, issueIdx) {
+  let html = '<div class="issue-card ' + i.severity + '"><div class="issue-header"><span class="sev-pill ' + i.severity + '">' + i.severity + '</span>' +
     '<span class="issue-title ' + i.severity + '">' + esc(i.title) + '</span></div>' +
     '<div class="issue-why">' + esc(i.why) + '</div>' +
-    '<div class="fix-box ' + i.severity + '"><div class="fix-label">Fix it</div><div class="fix-text">' + esc(i.fix) + '</div></div></div>';
+    '<div class="fix-box ' + i.severity + '"><div class="fix-label">Fix it</div><div class="fix-text">' + esc(i.fix) + '</div></div>';
+
+  // Action notes section
+  if (asinId !== undefined) {
+    const key = issueKey(i);
+    const allNotes = getActionNotes(asinId);
+    const notes = allNotes[key] || [];
+    html += '<div class="action-notes">';
+    if (notes.length) {
+      for (let n = 0; n < notes.length; n++) {
+        html += '<div class="action-note">' +
+          '<div class="action-note-date">' + formatNoteDate(notes[n].date) + '</div>' +
+          '<div class="action-note-text">' + esc(notes[n].text) + '</div>' +
+          '<button class="action-note-del" onclick="deleteActionNote(\'' + asinId + '\',' + issueIdx + ',' + n + ')" title="Remove">\u00d7</button></div>';
+      }
+    }
+    html += '<div class="add-note-row">' +
+      '<input class="add-note-input" id="note_' + issueIdx + '" placeholder="What did you do to fix this?" onkeydown="if(event.key===\'Enter\')addActionNote(\'' + asinId + '\',' + issueIdx + ',this.value)">' +
+      '<button class="add-note-btn" onclick="addActionNote(\'' + asinId + '\',' + issueIdx + ',document.getElementById(\'note_' + issueIdx + '\').value)">Add</button>' +
+      '</div></div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function formatNoteDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return (d.getMonth()+1) + '/' + d.getDate() + '/' + String(d.getFullYear()).slice(2);
 }
 
 // --- Helpers ---
